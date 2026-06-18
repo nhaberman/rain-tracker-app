@@ -153,7 +153,7 @@ struct SettingsView: View {
                 continue
             }
 
-            let timeOfDay = parts.count >= 3 ? TimeOfDay(rawValue: parts[2]) : nil
+            let timeOfDay = parts.count >= 3 ? TimeOfDay(rawValue: parts[2]) : .unknown
             let observation = RainObservation(amount: amount, date: date, timeOfDay: timeOfDay)
             modelContext.insert(observation)
             imported += 1

@@ -35,6 +35,6 @@ final class RainObservation {
     init(amount: Double, date: Date = .now, timeOfDay: TimeOfDay? = nil) {
         self.amount = amount
         self.date = Calendar.current.startOfDay(for: date)
-        self.timeOfDay = timeOfDay ?? .from(date: date)
+        self.timeOfDay = timeOfDay ?? .unknown
     }
 }
