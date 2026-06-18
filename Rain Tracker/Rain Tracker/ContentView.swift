@@ -2,6 +2,21 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
+    var body: some View {
+        TabView {
+            MeasurementsView()
+                .tabItem {
+                    Label("Measurements", systemImage: "drop.fill")
+                }
+            CalendarView()
+                .tabItem {
+                    Label("Calendar", systemImage: "calendar")
+                }
+        }
+    }
+}
+
+struct MeasurementsView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \RainObservation.date, order: .reverse) private var observations: [RainObservation]
 
