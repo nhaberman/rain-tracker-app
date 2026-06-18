@@ -14,7 +14,11 @@ struct Rain_TrackerApp: App {
         let schema = Schema([
             RainObservation.self,
         ])
+        #if targetEnvironment(simulator)
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+        #else
+        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false, cloudKitDatabase: .automatic)
+        #endif
 
         do {
             return try ModelContainer(for: schema, configurations: [modelConfiguration])

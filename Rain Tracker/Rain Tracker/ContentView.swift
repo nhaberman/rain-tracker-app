@@ -11,7 +11,7 @@ struct ContentView: View {
         let cal = Calendar.current
         let now = Date.now
         return observations
-            .filter { cal.isDate($0.date, equalTo: now, toGranularity: .month) }
+            .filter { cal.isDate($0.date ?? now, equalTo: now, toGranularity: .month) }
             .reduce(0) { $0 + $1.amount }
     }
 
@@ -77,14 +77,8 @@ struct ObservationRow: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
-                Text(observation.date, style: .date)
+                Text(observation.date ?? .now, style: .date)
                     .font(.subheadline)
-                if !observation.notes.isEmpty {
-                    Text(observation.notes)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
-                }
             }
             Spacer()
             HStack(alignment: .firstTextBaseline, spacing: 2) {
@@ -109,12 +103,7 @@ struct ObservationDetailView: View {
                     Text("\(observation.amount, format: .number.precision(.fractionLength(2))) in")
                 }
                 LabeledContent("Date") {
-                    Text(observation.date, format: .dateTime)
-                }
-            }
-            if !observation.notes.isEmpty {
-                Section("Notes") {
-                    Text(observation.notes)
+                    Text(observation.date ?? .now, format: .dateTime)
                 }
             }
         }

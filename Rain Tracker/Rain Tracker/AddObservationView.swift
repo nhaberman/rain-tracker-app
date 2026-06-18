@@ -7,7 +7,6 @@ struct AddObservationView: View {
 
     @State private var amountText = ""
     @State private var date = Date.now
-    @State private var notes = ""
 
     private var amount: Double? { Double(amountText) }
 
@@ -24,10 +23,6 @@ struct AddObservationView: View {
                     DatePicker("Date & Time", selection: $date, displayedComponents: [.date, .hourAndMinute])
                 }
 
-                Section("Notes (optional)") {
-                    TextField("Any observations…", text: $notes, axis: .vertical)
-                        .lineLimit(3...6)
-                }
             }
             .navigationTitle("Log Rain")
             .navigationBarTitleDisplayMode(.inline)
@@ -45,7 +40,7 @@ struct AddObservationView: View {
 
     private func save() {
         guard let amount, amount > 0 else { return }
-        modelContext.insert(RainObservation(amount: amount, date: date, notes: notes))
+        modelContext.insert(RainObservation(amount: amount, date: date))
         dismiss()
     }
 }
