@@ -1,0 +1,18 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="rulerGrad" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0%" stop-color="#FFFFFF"/>
+<stop offset="100%" stop-color="#E2E8F0"/>
+</linearGradient>
+</defs>
+<rect x="663" y="90" width="196" height="843" rx="33" fill="url(#rulerGrad)"/>
+<line x1="859" y1="151" x2="738" y2="151" stroke="#1B4FA0" stroke-width="9"/>
+<line x1="859" y1="241" x2="791" y2="241" stroke="#1B4FA0" stroke-width="9"/>
+<line x1="859" y1="331" x2="738" y2="331" stroke="#1B4FA0" stroke-width="9"/>
+<line x1="859" y1="422" x2="791" y2="422" stroke="#1B4FA0" stroke-width="9"/>
+<line x1="859" y1="512" x2="738" y2="512" stroke="#1B4FA0" stroke-width="9"/>
+<line x1="859" y1="602" x2="791" y2="602" stroke="#1B4FA0" stroke-width="9"/>
+<line x1="859" y1="693" x2="738" y2="693" stroke="#1B4FA0" stroke-width="9"/>
+<line x1="859" y1="783" x2="791" y2="783" stroke="#1B4FA0" stroke-width="9"/>
+<line x1="859" y1="873" x2="738" y2="873" stroke="#1B4FA0" stroke-width="9"/>
+</svg>
