@@ -96,6 +96,9 @@ struct ObservationRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(observation.date ?? .now, style: .date)
                     .font(.subheadline)
+                Text(observation.timeOfDay.label)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
             Spacer()
             HStack(alignment: .firstTextBaseline, spacing: 2) {
@@ -120,7 +123,10 @@ struct ObservationDetailView: View {
                     Text("\(observation.amount, format: .number.precision(.fractionLength(2))) in")
                 }
                 LabeledContent("Date") {
-                    Text(observation.date ?? .now, format: .dateTime)
+                    Text(observation.date ?? .now, format: .dateTime.year().month().day())
+                }
+                LabeledContent("Time of Day") {
+                    Text(observation.timeOfDay.label)
                 }
             }
         }
