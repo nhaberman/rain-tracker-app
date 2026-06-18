@@ -5,6 +5,8 @@ struct AddObservationView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
 
+    @AppStorage("useTimeOfDay") private var useTimeOfDay = true
+
     @State private var amountText = ""
     @State private var date = Date.now
     @State private var timeOfDay: TimeOfDay = TimeOfDay.from(date: .now)
@@ -21,13 +23,16 @@ struct AddObservationView: View {
                         Text("inches")
                             .foregroundStyle(.secondary)
                     }
-                    DatePicker("Date", selection: $date, displayedComponents: .date)
-                    Picker("Time of Day", selection: $timeOfDay) {
-                        ForEach(TimeOfDay.allCases, id: \.self) { t in
-                            Text(t.label).tag(t)
+                    .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
+                    DatePicker("Date", selection: $date, in: ...Date.now, displayedComponents: .date)
+                    if useTimeOfDay {
+                        Picker("Time of Day", selection: $timeOfDay) {
+                            ForEach(TimeOfDay.selectableCases, id: \.self) { t in
+                                Text(t.label).tag(t)
+                            }
                         }
+                        .pickerStyle(.segmented)
                     }
-                    .pickerStyle(.segmented)
                 }
             }
             .navigationTitle("Log Rain")
@@ -46,7 +51,7 @@ struct AddObservationView: View {
 
     private func save() {
         guard let amount, amount > 0 else { return }
-        modelContext.insert(RainObservation(amount: amount, date: date, timeOfDay: timeOfDay))
+        modelContext.insert(RainObservation(amount: amount, date: date, timeOfDay: useTimeOfDay ? timeOfDay : .unknown))
         dismiss()
     }
 }

@@ -7,23 +7,23 @@ struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \RainObservation.date) private var observations: [RainObservation]
 
+    @AppStorage("useTimeOfDay") var useTimeOfDay = true
+
     @State private var exportItem: ExportItem?
     @State private var showExportError = false
     @State private var showImportPicker = false
     @State private var showImportModeAlert = false
     @State private var importMode: ImportMode = .merge
     @State private var importResult: ImportResult?
+    @State private var showDeleteAllAlert = false
 
     var body: some View {
         NavigationStack {
             Form {
                 Section(header: Text("Data Management"), footer: Text("""
-• Export your measurements to a file to back up or share them.
 • Import an external file to load measurements to restore or transfer your data.
+• Export your measurements to a file to back up or share them.
 """)) {
-                    Button("Export Data") {
-                        exportData()
-                    }
                     Button("Import Data") {
                         if observations.isEmpty {
                             importMode = .merge
@@ -32,6 +32,16 @@ struct SettingsView: View {
                             showImportModeAlert = true
                         }
                     }
+                    Button("Export Data") {
+                        exportData()
+                    }
+                    Button("Delete All Data", role: .destructive) {
+                        showDeleteAllAlert = true
+                    }
+                }
+
+                Section("Behavior") {
+                    Toggle("Use \"Time of Day\"", isOn: $useTimeOfDay)
                 }
 
                 Section("About") {
@@ -64,6 +74,14 @@ struct SettingsView: View {
                 case .failure:
                     importResult = ImportResult(imported: 0, skipped: 0, failed: true)
                 }
+            }
+            .alert("Delete All Data", isPresented: $showDeleteAllAlert) {
+                Button("Delete All", role: .destructive) {
+                    observations.forEach { modelContext.delete($0) }
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("This will permanently delete all \(observations.count) logged measurement(s). This cannot be undone.")
             }
             .alert("Export Failed", isPresented: $showExportError) {
                 Button("OK", role: .cancel) {}
@@ -127,15 +145,15 @@ struct SettingsView: View {
             guard !trimmed.isEmpty else { continue }
 
             let parts = trimmed.components(separatedBy: ",")
-            guard parts.count == 3,
+            guard parts.count >= 2,
                   let date = formatter.date(from: parts[0]),
-                  let timeOfDay = TimeOfDay(rawValue: parts[1]),
-                  let amount = Double(parts[2])
+                  let amount = Double(parts[1])
             else {
                 skipped += 1
                 continue
             }
 
+            let timeOfDay = parts.count >= 3 ? TimeOfDay(rawValue: parts[2]) : nil
             let observation = RainObservation(amount: amount, date: date, timeOfDay: timeOfDay)
             modelContext.insert(observation)
             imported += 1
@@ -150,7 +168,7 @@ struct SettingsView: View {
 
         let lines = observations.compactMap { obs -> String? in
             guard let date = obs.date else { return nil }
-            return "\(formatter.string(from: date)),\(obs.timeOfDay.rawValue),\(obs.amount)"
+            return "\(formatter.string(from: date)),\(obs.amount),\(obs.resolvedTimeOfDay.rawValue)"
         }
         let content = lines.joined(separator: "\n")
 

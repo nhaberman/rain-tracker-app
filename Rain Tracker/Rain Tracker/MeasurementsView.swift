@@ -90,15 +90,18 @@ struct MeasurementsView: View {
 
 struct ObservationRow: View {
     let observation: RainObservation
+    @AppStorage("useTimeOfDay") private var useTimeOfDay = true
 
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
                 Text(observation.date ?? .now, style: .date)
                     .font(.subheadline)
-                Text(observation.timeOfDay.label)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                if useTimeOfDay && observation.resolvedTimeOfDay != .unknown {
+                    Text(observation.resolvedTimeOfDay.label)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
             Spacer()
             HStack(alignment: .firstTextBaseline, spacing: 2) {
@@ -115,6 +118,7 @@ struct ObservationRow: View {
 
 struct ObservationDetailView: View {
     let observation: RainObservation
+    @AppStorage("useTimeOfDay") private var useTimeOfDay = true
 
     var body: some View {
         Form {
@@ -125,8 +129,10 @@ struct ObservationDetailView: View {
                 LabeledContent("Date") {
                     Text(observation.date ?? .now, format: .dateTime.year().month().day())
                 }
-                LabeledContent("Time of Day") {
-                    Text(observation.timeOfDay.label)
+                if useTimeOfDay && observation.resolvedTimeOfDay != .unknown {
+                    LabeledContent("Time of Day") {
+                        Text(observation.resolvedTimeOfDay.label)
+                    }
                 }
             }
         }

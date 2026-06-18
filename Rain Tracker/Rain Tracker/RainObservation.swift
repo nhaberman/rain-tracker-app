@@ -2,10 +2,14 @@ import Foundation
 import SwiftData
 
 enum TimeOfDay: String, CaseIterable, Codable {
+    case unknown   = "Unknown"
     case night     = "Night"
     case morning   = "Morning"
     case afternoon = "Afternoon"
     case evening   = "Evening"
+
+    /// Cases shown in the UI picker — excludes the sentinel used for imported data.
+    static let selectableCases: [TimeOfDay] = [.night, .morning, .afternoon, .evening]
 
     static func from(date: Date) -> TimeOfDay {
         let hour = Calendar.current.component(.hour, from: date)
@@ -24,11 +28,13 @@ enum TimeOfDay: String, CaseIterable, Codable {
 final class RainObservation {
     var amount: Double = 0
     var date: Date?
-    var timeOfDay: TimeOfDay = TimeOfDay.morning
+    var timeOfDay: TimeOfDay?
+
+    var resolvedTimeOfDay: TimeOfDay { timeOfDay ?? .unknown }
 
     init(amount: Double, date: Date = .now, timeOfDay: TimeOfDay? = nil) {
         self.amount = amount
         self.date = Calendar.current.startOfDay(for: date)
-        self.timeOfDay = timeOfDay ?? TimeOfDay.from(date: date)
+        self.timeOfDay = timeOfDay ?? .from(date: date)
     }
 }
