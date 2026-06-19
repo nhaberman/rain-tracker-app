@@ -73,6 +73,14 @@ struct MeasurementsView: View {
             .reduce(0) { $0 + $1.amount }
     }
 
+    private var yearTotal: Double {
+        let cal = Calendar.current
+        let now = Date.now
+        return observations
+            .filter { cal.isDate($0.date ?? now, equalTo: now, toGranularity: .year) }
+            .reduce(0) { $0 + $1.amount }
+    }
+
     var body: some View {
         NavigationStack {
             List {
@@ -82,6 +90,13 @@ struct MeasurementsView: View {
                             Label("This month", systemImage: "drop.fill")
                             Spacer()
                             Text(monthTotal, format: .number.precision(.fractionLength(2)))
+                            Text("in").foregroundStyle(.secondary)
+                        }
+                        .font(.headline)
+                        HStack {
+                            Label { Text("This year") } icon: { TripleDropIcon() }
+                            Spacer()
+                            Text(yearTotal, format: .number.precision(.fractionLength(2)))
                             Text("in").foregroundStyle(.secondary)
                         }
                         .font(.headline)
@@ -160,7 +175,10 @@ struct MeasurementsView: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button { showingAdd = true } label: {
-                        Label("Log Rain", systemImage: "plus")
+                        Image(systemName: "plus.circle.fill")
+                            .symbolRenderingMode(.multicolor)
+                            .foregroundStyle(.white, .blue)
+                            .font(.title2)
                     }
                 }
             }
@@ -314,6 +332,36 @@ struct ObservationDetailView: View {
     }
 }
 
+
+struct TripleDropIcon: View {
+    private let dropSize: CGFloat = 13
+    private let outlineSize: CGFloat = 15.5
+
+    var body: some View {
+        ZStack {
+            singleDrop(offset: CGSize(width: -6, height: -3))   // left: back, highest
+            singleDrop(offset: CGSize(width: 6, height: -1))    // right: middle
+            singleDrop(offset: CGSize(width: 0, height: 3))     // center: front, lowest
+        }
+        .frame(width: 22, height: 22)
+    }
+
+    private func singleDrop(offset: CGSize) -> some View {
+        ZStack {
+            Image(systemName: "drop.fill")
+                .resizable()
+                .scaledToFit()
+                .frame(width: outlineSize, height: outlineSize)
+                .foregroundStyle(Color(uiColor: .secondarySystemGroupedBackground))
+            Image(systemName: "drop.fill")
+                .resizable()
+                .scaledToFit()
+                .frame(width: dropSize, height: dropSize)
+                .foregroundStyle(Color.accentColor)
+        }
+        .offset(offset)
+    }
+}
 
 #Preview {
     MeasurementsView()
