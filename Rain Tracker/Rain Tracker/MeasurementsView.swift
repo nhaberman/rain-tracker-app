@@ -48,6 +48,23 @@ struct MeasurementsView: View {
         }
     }
 
+    private static let monthFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "MMMM yyyy"
+        return f
+    }()
+
+    private var groupedObservations: [(key: String, sortDate: Date, observations: [RainObservation])] {
+        let cal = Calendar.current
+        let grouped = Dictionary(grouping: visibleObservations) { obs -> Date in
+            let d = obs.date ?? .now
+            return cal.date(from: cal.dateComponents([.year, .month], from: d))!
+        }
+        return grouped
+            .map { (key: Self.monthFormatter.string(from: $0.key), sortDate: $0.key, observations: $0.value) }
+            .sorted { $0.sortDate > $1.sortDate }
+    }
+
     private var monthTotal: Double {
         let cal = Calendar.current
         let now = Date.now
@@ -71,38 +88,51 @@ struct MeasurementsView: View {
                     }
                 }
 
-                Section {
-                    if observations.isEmpty {
+                if observations.isEmpty {
+                    Section {
                         ContentUnavailableView(
                             "No readings yet",
                             systemImage: "cloud.rain",
                             description: Text("Tap + to log your first rain gauge reading.")
                         )
-                    } else if visibleObservations.isEmpty {
+                    }
+                } else if visibleObservations.isEmpty {
+                    Section {
                         let periodLabel = filter == .currentYear ? "this year" : "the last 30 days"
                         ContentUnavailableView(
                             "No readings for \(periodLabel)",
                             systemImage: "cloud.sun.rain",
                             description: Text("Tap \(Image(systemName: "line.3.horizontal.decrease.circle.fill")) to view more measurements.")
                         )
-                    } else {
+                    }
+                } else if filter == .last30Days {
+                    Section {
                         ForEach(visibleObservations) { observation in
                             NavigationLink(destination: ObservationDetailView(observation: observation)) {
                                 ObservationRow(observation: observation)
                             }
                         }
                         .onDelete(perform: delete)
+                    } footer: {
+                        footerText
                     }
-                } footer: {
-                    if !observations.isEmpty && !visibleObservations.isEmpty {
-                        if filter == .all || visibleObservations.count == observations.count {
-                            Text("Showing all \(observations.count) measurements recorded.")
-                        } else {
-                            Text("""
-Showing \(visibleObservations.count) of \(observations.count) total measurements.
-Tap \(Image(systemName: "line.3.horizontal.decrease.circle.fill")) to view more.
-""")
+                } else {
+                    ForEach(groupedObservations, id: \.key) { group in
+                        Section(group.key) {
+                            ForEach(group.observations) { observation in
+                                NavigationLink(destination: ObservationDetailView(observation: observation)) {
+                                    ObservationRow(observation: observation)
+                                }
+                            }
+                            .onDelete { offsets in
+                                for index in offsets {
+                                    modelContext.delete(group.observations[index])
+                                }
+                            }
                         }
+                    }
+                    Section { } footer: {
+                        footerText
                     }
                 }
             }
@@ -146,6 +176,14 @@ Tap \(Image(systemName: "line.3.horizontal.decrease.circle.fill")) to view more.
     private func delete(at offsets: IndexSet) {
         for index in offsets {
             modelContext.delete(visibleObservations[index])
+        }
+    }
+
+    @ViewBuilder private var footerText: some View {
+        if filter == .all || visibleObservations.count == observations.count {
+            Text("Showing all \(observations.count) measurements recorded.")
+        } else {
+            Text("Showing \(visibleObservations.count) of \(observations.count) total measurements. Tap \(Image(systemName: "line.3.horizontal.decrease.circle.fill")) to view more.")
         }
     }
 }
