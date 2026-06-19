@@ -20,6 +20,10 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
+                Section("Behavior") {
+                    Toggle("Use \"Time of Day\"", isOn: $useTimeOfDay)
+                }
+                
                 Section(header: Text("Data Management"), footer: Text("""
 • Import an external file to load measurements to restore or transfer your data.
 • Export your measurements to a file to back up or share them.
@@ -39,11 +43,7 @@ struct SettingsView: View {
                         showDeleteAllAlert = true
                     }
                 }
-
-                Section("Behavior") {
-                    Toggle("Use \"Time of Day\"", isOn: $useTimeOfDay)
-                }
-
+            
                 Section("About") {
                     LabeledContent("Version") {
                         Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "—")
