@@ -175,10 +175,7 @@ struct MeasurementsView: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button { showingAdd = true } label: {
-                        Image(systemName: "plus.circle.fill")
-                            .symbolRenderingMode(.multicolor)
-                            .foregroundStyle(.white, .blue)
-                            .font(.title2)
+                        Label("Log Rain", systemImage: "plus")
                     }
                 }
             }
