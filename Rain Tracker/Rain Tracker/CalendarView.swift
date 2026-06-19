@@ -83,6 +83,22 @@ struct CalendarView: View {
                     }
                     .background(Color(.secondarySystemGroupedBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .gesture(
+                        DragGesture(minimumDistance: 40)
+                            .onEnded { value in
+                                let horizontal = value.translation.width
+                                let vertical = value.translation.height
+                                guard abs(horizontal) > abs(vertical) else { return }
+                                if horizontal < 0 {
+                                    let next = calendar.date(byAdding: .month, value: 1, to: displayedMonth)!
+                                    if !calendar.isDate(displayedMonth, equalTo: .now, toGranularity: .month) {
+                                        displayedMonth = next
+                                    }
+                                } else {
+                                    displayedMonth = calendar.date(byAdding: .month, value: -1, to: displayedMonth)!
+                                }
+                            }
+                    )
 
                     VStack(spacing: 0) {
                         statRow(label: "Month total", systemImage: "drop.fill", value: displayedMonthTotal)
