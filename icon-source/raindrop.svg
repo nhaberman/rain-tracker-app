@@ -1,0 +1,10 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="dropGrad" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0%" stop-color="#FFFFFF"/>
+<stop offset="55%" stop-color="#D8E2EE"/>
+<stop offset="100%" stop-color="#9FB0C7"/>
+</linearGradient>
+</defs>
+<path d="M512,175 C416,297 294,455 294,629 A218,218 0 1,0 730,629 C730,455 608,297 512,175 Z" fill="url(#dropGrad)" stroke="#FFFFFF" stroke-width="4.5" stroke-opacity="0.5"/>
+</svg>
