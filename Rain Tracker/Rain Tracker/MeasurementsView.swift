@@ -25,7 +25,15 @@ enum MeasurementFilter: String, CaseIterable {
 
 struct MeasurementsView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query(sort: \RainObservation.date, order: .reverse) private var observations: [RainObservation]
+    @Query(sort: \RainObservation.date, order: .reverse) private var rawObservations: [RainObservation]
+
+    private var observations: [RainObservation] {
+        rawObservations.sorted {
+            let d0 = $0.date ?? .distantPast, d1 = $1.date ?? .distantPast
+            guard Calendar.current.isDate(d0, inSameDayAs: d1) else { return d0 > d1 }
+            return $0.resolvedTimeOfDay.sortOrder > $1.resolvedTimeOfDay.sortOrder
+        }
+    }
 
     @State private var showingAdd = false
     @State private var showingSettings = false

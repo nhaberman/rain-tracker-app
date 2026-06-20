@@ -22,6 +22,16 @@ enum TimeOfDay: String, CaseIterable, Codable {
     }
 
     var label: String { rawValue }
+
+    var sortOrder: Int {
+        switch self {
+        case .night:     return 0
+        case .morning:   return 1
+        case .afternoon: return 2
+        case .evening:   return 3
+        case .unknown:   return -1
+        }
+    }
 }
 
 @Model
