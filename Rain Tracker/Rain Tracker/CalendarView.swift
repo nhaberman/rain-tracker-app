@@ -35,12 +35,14 @@ struct CalendarView: View {
         monthlyTotals[displayedMonth] ?? 0
     }
 
-    private var displayedMonthDailyAverage: Double {
+    private var displayedMonthRainyDayCount: Int {
         guard let monthInterval = calendar.dateInterval(of: .month, for: displayedMonth) else { return 0 }
-        let lastCountableDay = min(monthInterval.end, .now)
-        let days = calendar.dateComponents([.day], from: monthInterval.start, to: lastCountableDay).day ?? 1
-        guard days > 0 else { return 0 }
-        return displayedMonthTotal / Double(days)
+        return dailyTotals.keys.filter { monthInterval.contains($0) }.count
+    }
+
+    private var displayedMonthAvgPerRainyDay: Double {
+        guard displayedMonthRainyDayCount > 0 else { return 0 }
+        return displayedMonthTotal / Double(displayedMonthRainyDayCount)
     }
 
     private var daysInGrid: [Date?] {
@@ -103,7 +105,9 @@ struct CalendarView: View {
                     VStack(spacing: 0) {
                         statRow(label: "Month total", systemImage: "drop.fill", value: displayedMonthTotal)
                         Divider().padding(.leading, 40)
-                        statRow(label: "Daily average", systemImage: "chart.bar.fill", value: displayedMonthDailyAverage)
+                        statRow(label: "Rainy days", systemImage: "cloud.rain.fill", intValue: displayedMonthRainyDayCount)
+                        Divider().padding(.leading, 40)
+                        statRow(label: "Avg / rainy day", systemImage: "chart.line.uptrend.xyaxis", value: displayedMonthAvgPerRainyDay)
                     }
                     .background(Color(.secondarySystemGroupedBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 16))
@@ -186,6 +190,19 @@ struct CalendarView: View {
             Spacer()
             Text(value, format: .number.precision(.fractionLength(2)))
             Text("in").foregroundStyle(.secondary)
+        }
+        .font(.headline)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+    }
+
+    private func statRow(label: String, systemImage: String, intValue: Int) -> some View {
+        HStack {
+            Label(label, systemImage: systemImage)
+                .labelStyle(TintedIconLabelStyle())
+            Spacer()
+            Text("\(intValue)")
+            Text("days").foregroundStyle(.secondary)
         }
         .font(.headline)
         .padding(.horizontal, 16)

@@ -161,6 +161,16 @@ struct StatisticsView: View {
                     }
                 }
             }
+            .gesture(
+                DragGesture(minimumDistance: 40)
+                    .onEnded { value in
+                        if value.translation.width < 0, selectedYear < currentYear {
+                            selectedYear += 1
+                        } else if value.translation.width > 0, selectedYear > oldestYear {
+                            selectedYear -= 1
+                        }
+                    }
+            )
             .navigationTitle("\(String(selectedYear)) Statistics")
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
