@@ -172,6 +172,7 @@ struct StatisticsView: View {
                     }
             )
             .navigationTitle("\(String(selectedYear)) Statistics")
+            .navigationBarTitleDisplayMode(.automatic)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     if selectedYear > oldestYear {

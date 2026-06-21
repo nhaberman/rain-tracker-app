@@ -117,6 +117,15 @@ struct CalendarView: View {
             .background(Color(.systemGroupedBackground))
             .navigationTitle("Calendar")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                if !calendar.isDate(displayedMonth, equalTo: .now, toGranularity: .month) {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("Today") {
+                            displayedMonth = calendar.startOfMonth(for: .now)
+                        }
+                    }
+                }
+            }
         }
     }
 
