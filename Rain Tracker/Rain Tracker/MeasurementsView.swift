@@ -184,8 +184,10 @@ struct MeasurementsView: View {
                     EditButton()
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Image(systemName: "plus")
-                        .foregroundColor(Color.accentColor)
+                    Button { showingAdd = true } label: {
+                        Image(systemName: "plus")
+                            .foregroundColor(Color.accentColor)
+                    }
                 }
             }
             .sheet(isPresented: $showingAdd) {
