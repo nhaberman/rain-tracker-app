@@ -35,6 +35,7 @@ struct MeasurementsView: View {
         }
     }
 
+    @State private var showingAdd = false
     @State private var showingSettings = false
     @AppStorage("measurementFilter") private var filterRawValue: String = MeasurementFilter.last30Days.rawValue
     private var filter: MeasurementFilter { MeasurementFilter(rawValue: filterRawValue) ?? .last30Days }
@@ -180,6 +181,15 @@ struct MeasurementsView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     EditButton()
                 }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button { showingAdd = true } label: {
+                        Label("Log Rain", systemImage: "plus")
+                    }
+                    .tint(Color.accentColor)
+                }
+            }
+            .sheet(isPresented: $showingAdd) {
+                AddObservationView()
             }
             .sheet(isPresented: $showingSettings) {
                 SettingsView()
