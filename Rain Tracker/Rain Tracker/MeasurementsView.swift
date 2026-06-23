@@ -166,6 +166,7 @@ struct MeasurementsView: View {
                         Button { showingSettings = true } label: {
                             Image(systemName: "gear")
                         }
+                        
                         Menu {
                             Picker("Filter", selection: Binding(get: { filter }, set: { setFilter($0) })) {
                                 ForEach(MeasurementFilter.allCases, id: \.self) { option in
@@ -175,6 +176,7 @@ struct MeasurementsView: View {
                             .pickerStyle(.inline)
                         } label: {
                             Image(systemName: "line.3.horizontal.decrease.circle\(filter == .all ? "" : ".fill")")
+                                .foregroundColor(filter == .all ? .primary : Color.accentColor)
                         }
                     }
                 }
@@ -182,9 +184,8 @@ struct MeasurementsView: View {
                     EditButton()
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button { showingAdd = true } label: {
-                        DropPlusIcon()
-                    }
+                    Image(systemName: "plus")
+                        .foregroundColor(Color.accentColor)
                 }
             }
             .sheet(isPresented: $showingAdd) {
