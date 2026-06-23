@@ -183,9 +183,8 @@ struct MeasurementsView: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button { showingAdd = true } label: {
-                        Label("Log Rain", systemImage: "plus")
+                        DropPlusIcon()
                     }
-                    .tint(Color.accentColor)
                 }
             }
             .sheet(isPresented: $showingAdd) {
@@ -338,6 +337,21 @@ struct ObservationDetailView: View {
     }
 }
 
+
+struct DropPlusIcon: View {
+    var body: some View {
+        ZStack {
+            Image(systemName: "drop.fill")
+                .font(.title2.weight(.heavy))
+                .foregroundStyle(Color.accentColor)
+            Image(systemName: "plus")
+                .font(.caption.weight(.bold))
+                .foregroundStyle(.white)
+                .offset(y: 3)
+        }
+        .frame(width: 20, height: 20)
+    }
+}
 
 struct TripleDropIcon: View {
     private let dropSize: CGFloat = 13
