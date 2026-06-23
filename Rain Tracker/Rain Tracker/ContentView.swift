@@ -17,6 +17,7 @@ struct ContentView: View {
                     Label("Statistics", systemImage: "chart.bar.fill")
                 }
         }
+        .tabViewStyle(.sidebarAdaptable)
     }
 }
 
