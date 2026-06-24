@@ -34,6 +34,18 @@ enum TimeOfDay: String, CaseIterable, Codable {
     }
 }
 
+extension Double {
+    /// Converts a stored inches value to the display unit.
+    func toDisplay(metric: Bool) -> Double {
+        metric ? (self * 25.4).rounded() : self
+    }
+
+    /// Converts a user-entered display value back to stored inches.
+    static func fromDisplay(_ value: Double, metric: Bool) -> Double {
+        metric ? value / 25.4 : value
+    }
+}
+
 @Model
 final class RainObservation {
     var amount: Double = 0

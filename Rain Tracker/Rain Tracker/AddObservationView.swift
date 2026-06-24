@@ -6,6 +6,7 @@ struct AddObservationView: View {
     @Environment(\.dismiss) private var dismiss
 
     @AppStorage("useTimeOfDay") private var useTimeOfDay = true
+    @AppStorage("useMetric") private var useMetric = false
 
     @State private var amountText = ""
     @State private var date = Date.now
@@ -19,11 +20,17 @@ struct AddObservationView: View {
             Form {
                 Section("Reading") {
                     HStack {
-                        TextField("0.00", text: $amountText)
-                            .keyboardType(.decimalPad)
+                        TextField(useMetric ? "0" : "0.00", text: $amountText)
+                            .keyboardType(useMetric ? .numberPad : .decimalPad)
                             .focused($amountFocused)
-                            .onChange(of: amountText) { _, new in limitToTwoDecimals(new) }
-                        Text("inches")
+                            .onChange(of: amountText) { _, new in
+                                if useMetric {
+                                    amountText = new.filter { $0.isNumber }
+                                } else {
+                                    limitToTwoDecimals(new)
+                                }
+                            }
+                        Text(useMetric ? "mm" : "inches")
                             .foregroundStyle(.secondary)
                     }
                     .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
@@ -66,7 +73,8 @@ struct AddObservationView: View {
 
     private func save() {
         guard let amount, amount > 0 else { return }
-        modelContext.insert(RainObservation(amount: amount, date: date, timeOfDay: useTimeOfDay ? timeOfDay : .unknown))
+        let stored = Double.fromDisplay(amount, metric: useMetric)
+        modelContext.insert(RainObservation(amount: stored, date: date, timeOfDay: useTimeOfDay ? timeOfDay : .unknown))
         dismiss()
     }
 }

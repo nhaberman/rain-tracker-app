@@ -8,6 +8,7 @@ struct SettingsView: View {
     @Query(sort: \RainObservation.date) private var observations: [RainObservation]
 
     @AppStorage("useTimeOfDay") var useTimeOfDay = true
+    @AppStorage("useMetric") var useMetric = false
 
     @State private var exportItem: ExportItem?
     @State private var showExportError = false
@@ -21,7 +22,18 @@ struct SettingsView: View {
         NavigationStack {
             Form {
                 Section("Behavior") {
-                    Toggle("Use \"Time of Day\"", isOn: $useTimeOfDay)
+                    Toggle("""
+Use \"Time of Day\"
+when recording measurements
+""", isOn: $useTimeOfDay)
+                }
+                
+                Section("Units") {
+                    Picker("Units", selection: $useMetric) {
+                        Text("Imperial (in)").tag(false)
+                        Text("Metric (mm)").tag(true)
+                    }
+                    .pickerStyle(.segmented)
                 }
                 
                 Section(header: Text("Data Management"), footer: Text("""
