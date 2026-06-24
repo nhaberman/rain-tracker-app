@@ -40,7 +40,8 @@ struct AddObservationView: View {
             }
             .navigationTitle("Log Rain")
             .navigationBarTitleDisplayMode(.inline)
-            .presentationDetents([.medium])
+            .frame(maxWidth: 540)
+            .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
             .onAppear { amountFocused = true }
             .toolbar {
