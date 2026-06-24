@@ -179,6 +179,7 @@ struct StatisticsView: View {
                         Button { selectedYear -= 1 } label: {
                             Image(systemName: "chevron.left")
                         }
+                        .hoverEffect()
                     }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -186,6 +187,7 @@ struct StatisticsView: View {
                         Button { selectedYear += 1 } label: {
                             Image(systemName: "chevron.right")
                         }
+                        .hoverEffect()
                     }
                 }
             }

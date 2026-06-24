@@ -136,6 +136,7 @@ struct CalendarView: View {
                         Button("Today") {
                             displayedMonth = calendar.startOfMonth(for: .now)
                         }
+                        .hoverEffect()
                     }
                 }
             }
@@ -152,6 +153,7 @@ struct CalendarView: View {
                     .padding(8)
                     .contentShape(Rectangle())
             }
+            .hoverEffect()
 
             Spacer()
 
@@ -168,6 +170,7 @@ struct CalendarView: View {
                         .foregroundStyle(.blue)
                 }
             }
+            .hoverEffect()
             .sheet(isPresented: $showingMonthPicker) {
                 MonthPickerSheet(selectedDate: $pickerDate) {
                     displayedMonth = calendar.startOfMonth(for: pickerDate)
@@ -185,6 +188,7 @@ struct CalendarView: View {
                     .padding(8)
                     .contentShape(Rectangle())
             }
+            .hoverEffect()
             .disabled(calendar.isDate(displayedMonth, equalTo: .now, toGranularity: .month))
         }
         .padding(.horizontal, 8)
