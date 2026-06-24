@@ -45,6 +45,15 @@ struct CalendarView: View {
         return displayedMonthTotal / Double(displayedMonthRainyDayCount)
     }
 
+    private var displayedMonthRainiestDay: (date: Date, total: Double)? {
+        guard let monthInterval = calendar.dateInterval(of: .month, for: displayedMonth) else { return nil }
+        let entry = dailyTotals
+            .filter { monthInterval.contains($0.key) }
+            .max(by: { $0.value < $1.value })
+        guard let entry else { return nil }
+        return (date: entry.key, total: entry.value)
+    }
+
     private var daysInGrid: [Date?] {
         guard let monthInterval = calendar.dateInterval(of: .month, for: displayedMonth) else {
             return []
@@ -108,6 +117,10 @@ struct CalendarView: View {
                         statRow(label: "Rainy days", systemImage: "cloud.rain.fill", intValue: displayedMonthRainyDayCount)
                         Divider().padding(.leading, 40)
                         statRow(label: "Avg / rainy day", systemImage: "chart.line.uptrend.xyaxis", value: displayedMonthAvgPerRainyDay)
+                        if let rainiest = displayedMonthRainiestDay {
+                            Divider().padding(.leading, 40)
+                            rainiestDayRow(rainiest)
+                        }
                     }
                     .background(Color(.secondarySystemGroupedBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 16))
@@ -199,6 +212,26 @@ struct CalendarView: View {
             Spacer()
             Text(value, format: .number.precision(.fractionLength(2)))
             Text("in").foregroundStyle(.secondary)
+        }
+        .font(.headline)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+    }
+
+    private func rainiestDayRow(_ rainiest: (date: Date, total: Double)) -> some View {
+        HStack {
+            Label("Rainiest day", systemImage: "cloud.heavyrain.fill")
+                .labelStyle(TintedIconLabelStyle())
+            Spacer()
+            VStack(alignment: .trailing, spacing: 0) {
+                HStack(alignment: .firstTextBaseline, spacing: 2) {
+                    Text(rainiest.total, format: .number.precision(.fractionLength(2)))
+                    Text("in").foregroundStyle(.secondary)
+                }
+                Text(rainiest.date, format: .dateTime.month(.abbreviated).day())
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
         }
         .font(.headline)
         .padding(.horizontal, 16)

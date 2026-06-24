@@ -49,6 +49,28 @@ struct StatisticsView: View {
         monthlyTotals.max(by: { $0.value < $1.value })?.key
     }
 
+    private var statCards: [AnyView] {
+        var cards: [AnyView] = [
+            AnyView(StatCard(title: "Total", value: String(format: "%.2f", yearTotal), unit: "in", icon: "drop.fill")),
+            AnyView(StatCard(title: "Rainy Days", value: "\(rainyDayCount)", unit: "days", icon: "cloud.rain.fill")),
+            AnyView(StatCard(title: "Avg / Day", value: String(format: "%.2f", avgPerRainyDay), unit: "in", icon: "chart.line.uptrend.xyaxis")),
+        ]
+        if let rainiest = rainiestDay {
+            cards.append(AnyView(StatCard(title: "Rainiest Day", value: String(format: "%.2f", rainiest.total), unit: "in", icon: "cloud.heavyrain.fill", subtitle: rainiest.date.formatted(.dateTime.month(.abbreviated).day()))))
+        }
+        return cards
+    }
+
+    private var rainiestDay: (date: Date, total: Double)? {
+        var dailyTotals: [Date: Double] = [:]
+        for obs in yearObservations {
+            guard let d = obs.date else { continue }
+            dailyTotals[d, default: 0] += obs.amount
+        }
+        guard let entry = dailyTotals.max(by: { $0.value < $1.value }) else { return nil }
+        return (date: entry.key, total: entry.value)
+    }
+
     private var chartData: [MonthBar] {
         (1...12).map { month in
             MonthBar(month: month, total: monthlyTotals[month] ?? 0)
@@ -81,29 +103,7 @@ struct StatisticsView: View {
                 } else {
                     // Stat cards
                     Section {
-                        HStack(spacing: 0) {
-                            StatCard(
-                                title: "Total",
-                                value: String(format: "%.2f", yearTotal),
-                                unit: "in",
-                                icon: "drop.fill"
-                            )
-                            Divider()
-                            StatCard(
-                                title: "Rainy Days",
-                                value: "\(rainyDayCount)",
-                                unit: "days",
-                                icon: "cloud.rain.fill"
-                            )
-                            Divider()
-                            StatCard(
-                                title: "Avg / Day",
-                                value: String(format: "%.2f", avgPerRainyDay),
-                                unit: "in",
-                                icon: "chart.line.uptrend.xyaxis"
-                            )
-                        }
-                        .frame(maxWidth: .infinity)
+                        StatCardGrid(cards: statCards)
                     }
                     .listRowInsets(EdgeInsets())
 
@@ -207,6 +207,7 @@ private struct StatCard: View {
     let value: String
     let unit: String
     let icon: String
+    var subtitle: String? = nil
 
     var body: some View {
         VStack(spacing: 6) {
@@ -222,9 +223,64 @@ private struct StatCard: View {
                 .font(.caption2)
                 .foregroundStyle(.secondary)
                 .textCase(.uppercase)
+            if let subtitle {
+                Text(subtitle)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 16)
+    }
+}
+
+private struct StatCardGrid: View {
+    let cards: [AnyView]
+    var minCardWidth: CGFloat = 150
+
+    @State private var columns: Int = 2
+
+    var body: some View {
+        let totalRows = (cards.count + columns - 1) / columns
+        let gridColumns = Array(repeating: GridItem(.flexible(), spacing: 0), count: columns)
+        let separatorColor = Color(uiColor: .separator)
+
+        LazyVGrid(columns: gridColumns, spacing: 0) {
+            ForEach(cards.indices, id: \.self) { index in
+                let col = index % columns
+                let row = index / columns
+                let showRight = col < columns - 1 && index + 1 < cards.count
+                let showBottom = row < totalRows - 1
+
+                cards[index]
+                    .frame(maxHeight: .infinity)
+                    .overlay(alignment: .trailing) {
+                        if showRight {
+                            Rectangle()
+                                .fill(separatorColor)
+                                .frame(width: 0.5)
+                        }
+                    }
+                    .overlay(alignment: .bottom) {
+                        if showBottom {
+                            Rectangle()
+                                .fill(separatorColor)
+                                .frame(height: 0.5)
+                        }
+                    }
+            }
+        }
+        .background(
+            GeometryReader { geo in
+                Color.clear
+                    .onAppear {
+                        columns = min(cards.count, max(1, Int(geo.size.width / minCardWidth)))
+                    }
+                    .onChange(of: geo.size.width) { _, w in
+                        columns = min(cards.count, max(1, Int(w / minCardWidth)))
+                    }
+            }
+        )
     }
 }
 
