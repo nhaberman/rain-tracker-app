@@ -12,7 +12,12 @@ struct ContentView: View {
                 .tabItem {
                     Label("Calendar", systemImage: "calendar")
                 }
+            StatisticsView()
+                .tabItem {
+                    Label("Statistics", systemImage: "chart.bar.fill")
+                }
         }
+        .tabViewStyle(.sidebarAdaptable)
     }
 }
 

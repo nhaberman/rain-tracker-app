@@ -35,12 +35,23 @@ struct CalendarView: View {
         monthlyTotals[displayedMonth] ?? 0
     }
 
-    private var displayedMonthDailyAverage: Double {
+    private var displayedMonthRainyDayCount: Int {
         guard let monthInterval = calendar.dateInterval(of: .month, for: displayedMonth) else { return 0 }
-        let lastCountableDay = min(monthInterval.end, .now)
-        let days = calendar.dateComponents([.day], from: monthInterval.start, to: lastCountableDay).day ?? 1
-        guard days > 0 else { return 0 }
-        return displayedMonthTotal / Double(days)
+        return dailyTotals.keys.filter { monthInterval.contains($0) }.count
+    }
+
+    private var displayedMonthAvgPerRainyDay: Double {
+        guard displayedMonthRainyDayCount > 0 else { return 0 }
+        return displayedMonthTotal / Double(displayedMonthRainyDayCount)
+    }
+
+    private var displayedMonthRainiestDay: (date: Date, total: Double)? {
+        guard let monthInterval = calendar.dateInterval(of: .month, for: displayedMonth) else { return nil }
+        let entry = dailyTotals
+            .filter { monthInterval.contains($0.key) }
+            .max(by: { $0.value < $1.value })
+        guard let entry else { return nil }
+        return (date: entry.key, total: entry.value)
     }
 
     private var daysInGrid: [Date?] {
@@ -83,11 +94,33 @@ struct CalendarView: View {
                     }
                     .background(Color(.secondarySystemGroupedBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .gesture(
+                        DragGesture(minimumDistance: 40)
+                            .onEnded { value in
+                                let horizontal = value.translation.width
+                                let vertical = value.translation.height
+                                guard abs(horizontal) > abs(vertical) else { return }
+                                if horizontal < 0 {
+                                    let next = calendar.date(byAdding: .month, value: 1, to: displayedMonth)!
+                                    if !calendar.isDate(displayedMonth, equalTo: .now, toGranularity: .month) {
+                                        displayedMonth = next
+                                    }
+                                } else {
+                                    displayedMonth = calendar.date(byAdding: .month, value: -1, to: displayedMonth)!
+                                }
+                            }
+                    )
 
                     VStack(spacing: 0) {
                         statRow(label: "Month total", systemImage: "drop.fill", value: displayedMonthTotal)
                         Divider().padding(.leading, 40)
-                        statRow(label: "Daily average", systemImage: "chart.bar.fill", value: displayedMonthDailyAverage)
+                        statRow(label: "Rainy days", systemImage: "cloud.rain.fill", intValue: displayedMonthRainyDayCount)
+                        Divider().padding(.leading, 40)
+                        statRow(label: "Avg / rainy day", systemImage: "chart.line.uptrend.xyaxis", value: displayedMonthAvgPerRainyDay)
+                        if let rainiest = displayedMonthRainiestDay {
+                            Divider().padding(.leading, 40)
+                            rainiestDayRow(rainiest)
+                        }
                     }
                     .background(Color(.secondarySystemGroupedBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 16))
@@ -97,6 +130,16 @@ struct CalendarView: View {
             .background(Color(.systemGroupedBackground))
             .navigationTitle("Calendar")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                if !calendar.isDate(displayedMonth, equalTo: .now, toGranularity: .month) {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("Today") {
+                            displayedMonth = calendar.startOfMonth(for: .now)
+                        }
+                        .hoverEffect()
+                    }
+                }
+            }
         }
     }
 
@@ -110,6 +153,7 @@ struct CalendarView: View {
                     .padding(8)
                     .contentShape(Rectangle())
             }
+            .hoverEffect()
 
             Spacer()
 
@@ -126,6 +170,7 @@ struct CalendarView: View {
                         .foregroundStyle(.blue)
                 }
             }
+            .hoverEffect()
             .sheet(isPresented: $showingMonthPicker) {
                 MonthPickerSheet(selectedDate: $pickerDate) {
                     displayedMonth = calendar.startOfMonth(for: pickerDate)
@@ -143,6 +188,7 @@ struct CalendarView: View {
                     .padding(8)
                     .contentShape(Rectangle())
             }
+            .hoverEffect()
             .disabled(calendar.isDate(displayedMonth, equalTo: .now, toGranularity: .month))
         }
         .padding(.horizontal, 8)
@@ -170,6 +216,39 @@ struct CalendarView: View {
             Spacer()
             Text(value, format: .number.precision(.fractionLength(2)))
             Text("in").foregroundStyle(.secondary)
+        }
+        .font(.headline)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+    }
+
+    private func rainiestDayRow(_ rainiest: (date: Date, total: Double)) -> some View {
+        HStack {
+            Label("Rainiest day", systemImage: "cloud.heavyrain.fill")
+                .labelStyle(TintedIconLabelStyle())
+            Spacer()
+            VStack(alignment: .trailing, spacing: 0) {
+                HStack(alignment: .firstTextBaseline, spacing: 2) {
+                    Text(rainiest.total, format: .number.precision(.fractionLength(2)))
+                    Text("in").foregroundStyle(.secondary)
+                }
+                Text(rainiest.date, format: .dateTime.month(.abbreviated).day())
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .font(.headline)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+    }
+
+    private func statRow(label: String, systemImage: String, intValue: Int) -> some View {
+        HStack {
+            Label(label, systemImage: systemImage)
+                .labelStyle(TintedIconLabelStyle())
+            Spacer()
+            Text("\(intValue)")
+            Text("days").foregroundStyle(.secondary)
         }
         .font(.headline)
         .padding(.horizontal, 16)
