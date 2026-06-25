@@ -37,8 +37,8 @@ struct ContentView: View {
 
     private func consumePendingAddObservation() {
         let defaults = UserDefaults(suiteName: RainStore.appGroupIdentifier)
-        if defaults?.bool(forKey: "pendingAddObservation") == true {
-            defaults?.set(false, forKey: "pendingAddObservation")
+        if defaults?.bool(forKey: RainStore.pendingAddObservationKey) == true {
+            defaults?.set(false, forKey: RainStore.pendingAddObservationKey)
             showingAdd = true
         }
     }

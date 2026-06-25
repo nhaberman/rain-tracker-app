@@ -26,17 +26,7 @@ struct DropPlusIcon: View {
     }
 }
 
-struct LogRainIntent: AppIntent {
-    static let title: LocalizedStringResource = "Log Rain"
-    static let description = IntentDescription("Open Rain Tracker to log a new measurement.")
-    static let openAppWhenRun: Bool = true
 
-    func perform() async throws -> some IntentResult {
-        UserDefaults(suiteName: RainStore.appGroupIdentifier)?
-            .set(true, forKey: "pendingAddObservation")
-        return .result()
-    }
-}
 
 struct RainEntry: TimelineEntry {
     let date: Date
@@ -304,11 +294,7 @@ struct RainAddControlWidget: ControlWidget {
     var body: some ControlWidgetConfiguration {
         StaticControlConfiguration(kind: "nickhaberman.Rain-Tracker.LogRainControl") {
             ControlWidgetButton(action: LogRainIntent()) {
-                Label {
-                    Text("Log Rain")
-                } icon: {
-                    DropPlusIcon(size: 22)
-                }
+                Label("Log Rain", systemImage: "drop.fill")
             }
         }
         .displayName("Log Rain")
