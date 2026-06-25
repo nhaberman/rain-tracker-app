@@ -2,9 +2,11 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
+    @State private var showingAdd = false
+
     var body: some View {
         TabView {
-            MeasurementsView()
+            MeasurementsView(showingAdd: $showingAdd)
                 .tabItem {
                     Label("Measurements", systemImage: "drop.fill")
                 }
@@ -18,6 +20,14 @@ struct ContentView: View {
                 }
         }
         .tabViewStyle(.sidebarAdaptable)
+        .sheet(isPresented: $showingAdd) {
+            AddObservationView()
+        }
+        .onOpenURL { url in
+            if url.scheme == "raintracker", url.host == "add" {
+                showingAdd = true
+            }
+        }
     }
 }
 

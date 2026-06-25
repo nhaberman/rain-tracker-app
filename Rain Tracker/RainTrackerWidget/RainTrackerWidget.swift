@@ -225,6 +225,60 @@ struct RainTotalsWidget: Widget {
     }
 }
 
+struct RainAddEntry: TimelineEntry {
+    let date: Date
+}
+
+struct RainAddProvider: TimelineProvider {
+    func placeholder(in context: Context) -> RainAddEntry {
+        RainAddEntry(date: .now)
+    }
+
+    func getSnapshot(in context: Context, completion: @escaping (RainAddEntry) -> Void) {
+        completion(RainAddEntry(date: .now))
+    }
+
+    func getTimeline(in context: Context, completion: @escaping (Timeline<RainAddEntry>) -> Void) {
+        completion(Timeline(entries: [RainAddEntry(date: .now)], policy: .never))
+    }
+}
+
+struct RainAddWidgetEntryView: View {
+    var entry: RainAddEntry
+
+    var body: some View {
+        VStack(spacing: 10) {
+            ZStack {
+                Image(systemName: "drop.fill")
+                    .font(.system(size: 56, weight: .bold))
+                    .foregroundStyle(.tint)
+                Image(systemName: "plus")
+                    .font(.system(size: 22, weight: .heavy))
+                    .foregroundStyle(.white)
+                    .offset(y: 6)
+            }
+            Text("Log Rain")
+                .font(.headline)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .widgetURL(URL(string: "raintracker://add"))
+    }
+}
+
+struct RainAddWidget: Widget {
+    let kind: String = "RainAddWidget"
+
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: RainAddProvider()) { entry in
+            RainAddWidgetEntryView(entry: entry)
+                .containerBackground(.fill.tertiary, for: .widget)
+        }
+        .configurationDisplayName("Log Rain")
+        .description("Tap to quickly log a new rain measurement.")
+        .supportedFamilies([.systemSmall])
+    }
+}
+
 #Preview(as: .systemSmall) {
     RainTrackerWidget()
 } timeline: {
@@ -241,5 +295,11 @@ struct RainTotalsWidget: Widget {
     RainTotalsWidget()
 } timeline: {
     RainEntry(date: .now, todayTotal: 0.42, monthTotal: 3.18, yearTotal: 22.65, rainyDaysThisMonth: 8)
+}
+
+#Preview(as: .systemSmall) {
+    RainAddWidget()
+} timeline: {
+    RainAddEntry(date: .now)
 }
 

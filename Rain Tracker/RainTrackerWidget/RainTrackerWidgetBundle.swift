@@ -13,5 +13,6 @@ struct RainTrackerWidgetBundle: WidgetBundle {
     var body: some Widget {
         RainTrackerWidget()
         RainTotalsWidget()
+        RainAddWidget()
     }
 }
