@@ -78,6 +78,7 @@ struct SettingsView: View {
             .alert("Delete All Data", isPresented: $showDeleteAllAlert) {
                 Button("Delete All", role: .destructive) {
                     observations.forEach { modelContext.delete($0) }
+                    modelContext.saveAndRefreshWidgets()
                 }
                 Button("Cancel", role: .cancel) {}
             } message: {
@@ -157,6 +158,10 @@ struct SettingsView: View {
             let observation = RainObservation(amount: amount, date: date, timeOfDay: timeOfDay)
             modelContext.insert(observation)
             imported += 1
+        }
+
+        if imported > 0 || importMode == .replace {
+            modelContext.saveAndRefreshWidgets()
         }
 
         importResult = ImportResult(imported: imported, skipped: skipped, failed: false)

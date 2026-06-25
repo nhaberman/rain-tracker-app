@@ -151,6 +151,7 @@ struct MeasurementsView: View {
                                 for index in offsets {
                                     modelContext.delete(group.observations[index])
                                 }
+                                modelContext.saveAndRefreshWidgets()
                             }
                         }
                     }
@@ -206,6 +207,7 @@ struct MeasurementsView: View {
         for index in offsets {
             modelContext.delete(visibleObservations[index])
         }
+        modelContext.saveAndRefreshWidgets()
     }
 
     @ViewBuilder private var footerText: some View {
@@ -339,6 +341,7 @@ struct ObservationDetailView: View {
         observation.amount = amount
         observation.date = Calendar.current.startOfDay(for: date)
         observation.timeOfDay = useTimeOfDay ? timeOfDay : .unknown
+        modelContext.saveAndRefreshWidgets()
         isEditing = false
     }
 }
