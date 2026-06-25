@@ -8,6 +8,35 @@
 import WidgetKit
 import SwiftUI
 import SwiftData
+import AppIntents
+
+struct DropPlusIcon: View {
+    var size: CGFloat = 56
+
+    var body: some View {
+        ZStack {
+            Image(systemName: "drop.fill")
+                .font(.system(size: size, weight: .bold))
+                .foregroundStyle(.tint)
+            Image(systemName: "plus")
+                .font(.system(size: size * 0.4, weight: .heavy))
+                .foregroundStyle(.white)
+                .offset(y: size * 0.1)
+        }
+    }
+}
+
+struct LogRainIntent: AppIntent {
+    static let title: LocalizedStringResource = "Log Rain"
+    static let description = IntentDescription("Open Rain Tracker to log a new measurement.")
+    static let openAppWhenRun: Bool = true
+
+    func perform() async throws -> some IntentResult {
+        UserDefaults(suiteName: RainStore.appGroupIdentifier)?
+            .set(true, forKey: "pendingAddObservation")
+        return .result()
+    }
+}
 
 struct RainEntry: TimelineEntry {
     let date: Date
@@ -248,15 +277,7 @@ struct RainAddWidgetEntryView: View {
 
     var body: some View {
         VStack(spacing: 10) {
-            ZStack {
-                Image(systemName: "drop.fill")
-                    .font(.system(size: 56, weight: .bold))
-                    .foregroundStyle(.tint)
-                Image(systemName: "plus")
-                    .font(.system(size: 22, weight: .heavy))
-                    .foregroundStyle(.white)
-                    .offset(y: 6)
-            }
+            DropPlusIcon(size: 56)
             Text("Log Rain")
                 .font(.headline)
         }
@@ -276,6 +297,22 @@ struct RainAddWidget: Widget {
         .configurationDisplayName("Log Rain")
         .description("Tap to quickly log a new rain measurement.")
         .supportedFamilies([.systemSmall])
+    }
+}
+
+struct RainAddControlWidget: ControlWidget {
+    var body: some ControlWidgetConfiguration {
+        StaticControlConfiguration(kind: "nickhaberman.Rain-Tracker.LogRainControl") {
+            ControlWidgetButton(action: LogRainIntent()) {
+                Label {
+                    Text("Log Rain")
+                } icon: {
+                    DropPlusIcon(size: 22)
+                }
+            }
+        }
+        .displayName("Log Rain")
+        .description("Quickly open Rain Tracker to log a measurement.")
     }
 }
 

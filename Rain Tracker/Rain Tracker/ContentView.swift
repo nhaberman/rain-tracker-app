@@ -3,6 +3,7 @@ import SwiftData
 
 struct ContentView: View {
     @State private var showingAdd = false
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         TabView {
@@ -27,6 +28,18 @@ struct ContentView: View {
             if url.scheme == "raintracker", url.host == "add" {
                 showingAdd = true
             }
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { consumePendingAddObservation() }
+        }
+        .onAppear { consumePendingAddObservation() }
+    }
+
+    private func consumePendingAddObservation() {
+        let defaults = UserDefaults(suiteName: RainStore.appGroupIdentifier)
+        if defaults?.bool(forKey: "pendingAddObservation") == true {
+            defaults?.set(false, forKey: "pendingAddObservation")
+            showingAdd = true
         }
     }
 }

@@ -14,5 +14,6 @@ struct RainTrackerWidgetBundle: WidgetBundle {
         RainTrackerWidget()
         RainTotalsWidget()
         RainAddWidget()
+        RainAddControlWidget()
     }
 }
