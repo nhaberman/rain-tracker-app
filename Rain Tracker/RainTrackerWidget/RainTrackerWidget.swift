@@ -82,73 +82,12 @@ struct RainProvider: TimelineProvider {
     }
 }
 
-struct RainTrackerWidgetEntryView: View {
-    @Environment(\.widgetFamily) private var family
-    var entry: RainEntry
+struct RainBigStat: View {
+    let label: String
+    let value: Double
+    let icon: String
 
     var body: some View {
-        switch family {
-        case .systemSmall:
-            smallBody
-        default:
-            mediumBody
-        }
-    }
-
-    private var smallBody: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack(spacing: 6) {
-                Image(systemName: "drop.fill")
-                    .foregroundStyle(.tint)
-                Text("Today")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .textCase(.uppercase)
-            }
-            HStack(alignment: .firstTextBaseline, spacing: 4) {
-                Text(entry.todayTotal, format: .number.precision(.fractionLength(2)))
-                    .font(.system(size: 34, weight: .bold, design: .rounded).monospacedDigit())
-                Text("in")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            Spacer(minLength: 0)
-            VStack(alignment: .leading, spacing: 2) {
-                statRow(label: "Month", value: entry.monthTotal)
-                statRow(label: "Year", value: entry.yearTotal)
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-    }
-
-    private var mediumBody: some View {
-        HStack(spacing: 16) {
-            bigStat(label: "Today", value: entry.todayTotal, icon: "drop.fill")
-            Divider()
-            VStack(alignment: .leading, spacing: 10) {
-                bigStat(label: "This Month", value: entry.monthTotal, icon: "calendar")
-                bigStat(label: "Year to Date", value: entry.yearTotal, icon: "chart.bar.fill")
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-    }
-
-    private func statRow(label: String, value: Double) -> some View {
-        HStack(spacing: 4) {
-            Text(label)
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-            Spacer(minLength: 4)
-            Text(value, format: .number.precision(.fractionLength(2)))
-                .font(.caption.monospacedDigit())
-                .bold()
-            Text("in")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-        }
-    }
-
-    private func bigStat(label: String, value: Double, icon: String) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             HStack(spacing: 4) {
                 Image(systemName: icon)
@@ -171,6 +110,93 @@ struct RainTrackerWidgetEntryView: View {
     }
 }
 
+struct RainTrackerWidgetEntryView: View {
+    @Environment(\.widgetFamily) private var family
+    var entry: RainEntry
+
+    var body: some View {
+        switch family {
+        case .systemSmall:
+            smallBody
+        default:
+            mediumBody
+        }
+    }
+
+    private var smallBody: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            todayCallout
+            Spacer(minLength: 0)
+            VStack(alignment: .leading, spacing: 2) {
+                statRow(label: "Month", value: entry.monthTotal)
+                statRow(label: "Year", value: entry.yearTotal)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    }
+
+    private var mediumBody: some View {
+        HStack(spacing: 16) {
+            todayCallout
+                .frame(maxWidth: .infinity, alignment: .leading)
+            Divider()
+            VStack(alignment: .leading, spacing: 10) {
+                RainBigStat(label: "This Month", value: entry.monthTotal, icon: "calendar")
+                RainBigStat(label: "Year to Date", value: entry.yearTotal, icon: "chart.bar.fill")
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+    }
+
+    private var todayCallout: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 6) {
+                Image(systemName: "drop.fill")
+                    .foregroundStyle(.tint)
+                Text("Today")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .textCase(.uppercase)
+            }
+            HStack(alignment: .firstTextBaseline, spacing: 4) {
+                Text(entry.todayTotal, format: .number.precision(.fractionLength(2)))
+                    .font(.system(size: 34, weight: .bold, design: .rounded).monospacedDigit())
+                Text("in")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    private func statRow(label: String, value: Double) -> some View {
+        HStack(spacing: 4) {
+            Text(label)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+            Spacer(minLength: 4)
+            Text(value, format: .number.precision(.fractionLength(2)))
+                .font(.caption.monospacedDigit())
+                .bold()
+            Text("in")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+        }
+    }
+}
+
+struct RainTotalsWidgetEntryView: View {
+    var entry: RainEntry
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            RainBigStat(label: "This Month", value: entry.monthTotal, icon: "calendar")
+            RainBigStat(label: "Year to Date", value: entry.yearTotal, icon: "chart.bar.fill")
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    }
+}
+
 struct RainTrackerWidget: Widget {
     let kind: String = "RainTrackerWidget"
 
@@ -182,6 +208,20 @@ struct RainTrackerWidget: Widget {
         .configurationDisplayName("Rain Tracker")
         .description("See today's rainfall plus month and year totals.")
         .supportedFamilies([.systemSmall, .systemMedium])
+    }
+}
+
+struct RainTotalsWidget: Widget {
+    let kind: String = "RainTotalsWidget"
+
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: RainProvider()) { entry in
+            RainTotalsWidgetEntryView(entry: entry)
+                .containerBackground(.fill.tertiary, for: .widget)
+        }
+        .configurationDisplayName("Rain Totals")
+        .description("See this month's and year-to-date rainfall totals.")
+        .supportedFamilies([.systemSmall])
     }
 }
 
@@ -197,3 +237,9 @@ struct RainTrackerWidget: Widget {
 } timeline: {
     RainEntry(date: .now, todayTotal: 0.42, monthTotal: 3.18, yearTotal: 22.65, rainyDaysThisMonth: 8)
 }
+#Preview(as: .systemSmall) {
+    RainTotalsWidget()
+} timeline: {
+    RainEntry(date: .now, todayTotal: 0.42, monthTotal: 3.18, yearTotal: 22.65, rainyDaysThisMonth: 8)
+}
+
