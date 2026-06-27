@@ -6,8 +6,42 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		07FFAA8F2FECBE0D00AC2CE3 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07FFAA8E2FECBE0D00AC2CE3 /* WidgetKit.framework */; };
+		07FFAA912FECBE0D00AC2CE3 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07FFAA902FECBE0D00AC2CE3 /* SwiftUI.framework */; };
+		07FFAA9E2FECBE1000AC2CE3 /* RainTrackerWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 07FFAA8C2FECBE0D00AC2CE3 /* RainTrackerWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		07FFAA9C2FECBE1000AC2CE3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 07E898562FE477D4001BA226 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 07FFAA8B2FECBE0D00AC2CE3;
+			remoteInfo = RainTrackerWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		07FFAA9F2FECBE1000AC2CE3 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				07FFAA9E2FECBE1000AC2CE3 /* RainTrackerWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		07E8985E2FE477D4001BA226 /* Rain Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Rain Tracker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		07FFAA8C2FECBE0D00AC2CE3 /* RainTrackerWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = RainTrackerWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		07FFAA8E2FECBE0D00AC2CE3 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		07FFAA902FECBE0D00AC2CE3 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		07FFAAAB2FECC41500AC2CE3 /* RainTrackerWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RainTrackerWidgetExtension.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -18,6 +52,21 @@
 			);
 			target = 07E8985D2FE477D4001BA226 /* Rain Tracker */;
 		};
+		07FFAAA32FECBE1000AC2CE3 /* Exceptions for "RainTrackerWidget" folder in "RainTrackerWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 07FFAA8B2FECBE0D00AC2CE3 /* RainTrackerWidgetExtension */;
+		};
+		07FFAAA92FECC3A900AC2CE3 /* Exceptions for "Rain Tracker" folder in "RainTrackerWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				RainObservation.swift,
+				RainStore.swift,
+			);
+			target = 07FFAA8B2FECBE0D00AC2CE3 /* RainTrackerWidgetExtension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -25,8 +74,17 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				07E8986B2FE477D6001BA226 /* Exceptions for "Rain Tracker" folder in "Rain Tracker" target */,
+				07FFAAA92FECC3A900AC2CE3 /* Exceptions for "Rain Tracker" folder in "RainTrackerWidgetExtension" target */,
 			);
 			path = "Rain Tracker";
+			sourceTree = "<group>";
+		};
+		07FFAA922FECBE0D00AC2CE3 /* RainTrackerWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				07FFAAA32FECBE1000AC2CE3 /* Exceptions for "RainTrackerWidget" folder in "RainTrackerWidgetExtension" target */,
+			);
+			path = RainTrackerWidget;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -39,13 +97,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		07FFAA892FECBE0D00AC2CE3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				07FFAA912FECBE0D00AC2CE3 /* SwiftUI.framework in Frameworks */,
+				07FFAA8F2FECBE0D00AC2CE3 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		07E898552FE477D4001BA226 = {
 			isa = PBXGroup;
 			children = (
+				07FFAAAB2FECC41500AC2CE3 /* RainTrackerWidgetExtension.entitlements */,
 				07E898602FE477D4001BA226 /* Rain Tracker */,
+				07FFAA922FECBE0D00AC2CE3 /* RainTrackerWidget */,
+				07FFAA8D2FECBE0D00AC2CE3 /* Frameworks */,
 				07E8985F2FE477D4001BA226 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -54,8 +124,18 @@
 			isa = PBXGroup;
 			children = (
 				07E8985E2FE477D4001BA226 /* Rain Tracker.app */,
+				07FFAA8C2FECBE0D00AC2CE3 /* RainTrackerWidgetExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		07FFAA8D2FECBE0D00AC2CE3 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				07FFAA8E2FECBE0D00AC2CE3 /* WidgetKit.framework */,
+				07FFAA902FECBE0D00AC2CE3 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -68,10 +148,12 @@
 				07E8985A2FE477D4001BA226 /* Sources */,
 				07E8985B2FE477D4001BA226 /* Frameworks */,
 				07E8985C2FE477D4001BA226 /* Resources */,
+				07FFAA9F2FECBE1000AC2CE3 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				07FFAA9D2FECBE1000AC2CE3 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				07E898602FE477D4001BA226 /* Rain Tracker */,
@@ -83,6 +165,28 @@
 			productReference = 07E8985E2FE477D4001BA226 /* Rain Tracker.app */;
 			productType = "com.apple.product-type.application";
 		};
+		07FFAA8B2FECBE0D00AC2CE3 /* RainTrackerWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 07FFAAA22FECBE1000AC2CE3 /* Build configuration list for PBXNativeTarget "RainTrackerWidgetExtension" */;
+			buildPhases = (
+				07FFAA882FECBE0D00AC2CE3 /* Sources */,
+				07FFAA892FECBE0D00AC2CE3 /* Frameworks */,
+				07FFAA8A2FECBE0D00AC2CE3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				07FFAA922FECBE0D00AC2CE3 /* RainTrackerWidget */,
+			);
+			name = RainTrackerWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = RainTrackerWidgetExtension;
+			productReference = 07FFAA8C2FECBE0D00AC2CE3 /* RainTrackerWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -90,11 +194,14 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2630;
+				LastSwiftUpdateCheck = 2650;
 				LastUpgradeCheck = 2650;
 				TargetAttributes = {
 					07E8985D2FE477D4001BA226 = {
 						CreatedOnToolsVersion = 26.3;
+					};
+					07FFAA8B2FECBE0D00AC2CE3 = {
+						CreatedOnToolsVersion = 26.5;
 					};
 				};
 			};
@@ -113,12 +220,20 @@
 			projectRoot = "";
 			targets = (
 				07E8985D2FE477D4001BA226 /* Rain Tracker */,
+				07FFAA8B2FECBE0D00AC2CE3 /* RainTrackerWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		07E8985C2FE477D4001BA226 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		07FFAA8A2FECBE0D00AC2CE3 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -135,7 +250,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		07FFAA882FECBE0D00AC2CE3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		07FFAA9D2FECBE1000AC2CE3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 07FFAA8B2FECBE0D00AC2CE3 /* RainTrackerWidgetExtension */;
+			targetProxy = 07FFAA9C2FECBE1000AC2CE3 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		07E8986D2FE477D6001BA226 /* Debug */ = {
@@ -352,6 +482,73 @@
 			};
 			name = Release;
 		};
+		07FFAAA02FECBE1000AC2CE3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = RainTrackerWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 22NW9J6LJ8;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RainTrackerWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = RainTrackerWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "nickhaberman.Rain-Tracker.RainTrackerWidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		07FFAAA12FECBE1000AC2CE3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = RainTrackerWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 22NW9J6LJ8;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RainTrackerWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = RainTrackerWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "nickhaberman.Rain-Tracker.RainTrackerWidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -369,6 +566,15 @@
 			buildConfigurations = (
 				07E8986D2FE477D6001BA226 /* Debug */,
 				07E8986E2FE477D6001BA226 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		07FFAAA22FECBE1000AC2CE3 /* Build configuration list for PBXNativeTarget "RainTrackerWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				07FFAAA02FECBE1000AC2CE3 /* Debug */,
+				07FFAAA12FECBE1000AC2CE3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -75,6 +75,7 @@ struct AddObservationView: View {
         guard let amount, amount > 0 else { return }
         let stored = Double.fromDisplay(amount, metric: useMetric)
         modelContext.insert(RainObservation(amount: stored, date: date, timeOfDay: useTimeOfDay ? timeOfDay : .unknown))
+        modelContext.saveAndRefreshWidgets()
         dismiss()
     }
 }

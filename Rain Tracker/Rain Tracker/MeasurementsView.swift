@@ -35,7 +35,7 @@ struct MeasurementsView: View {
         }
     }
 
-    @State private var showingAdd = false
+    @Binding var showingAdd: Bool
     @State private var showingSettings = false
     @AppStorage("useMetric") private var useMetric = false
     @AppStorage("measurementFilter") private var filterRawValue: String = MeasurementFilter.last30Days.rawValue
@@ -152,6 +152,7 @@ struct MeasurementsView: View {
                                 for index in offsets {
                                     modelContext.delete(group.observations[index])
                                 }
+                                modelContext.saveAndRefreshWidgets()
                             }
                         }
                     }
@@ -194,9 +195,6 @@ struct MeasurementsView: View {
                     .hoverEffect()
                 }
             }
-            .sheet(isPresented: $showingAdd) {
-                AddObservationView()
-            }
             .sheet(isPresented: $showingSettings) {
                 SettingsView()
             }
@@ -207,6 +205,7 @@ struct MeasurementsView: View {
         for index in offsets {
             modelContext.delete(visibleObservations[index])
         }
+        modelContext.saveAndRefreshWidgets()
     }
 
     @ViewBuilder private var footerText: some View {
@@ -349,6 +348,7 @@ struct ObservationDetailView: View {
         observation.amount = Double.fromDisplay(amount, metric: useMetric)
         observation.date = Calendar.current.startOfDay(for: date)
         observation.timeOfDay = useTimeOfDay ? timeOfDay : .unknown
+        modelContext.saveAndRefreshWidgets()
         isEditing = false
     }
 }
@@ -400,6 +400,6 @@ struct TripleDropIcon: View {
 }
 
 #Preview {
-    MeasurementsView()
+    MeasurementsView(showingAdd: .constant(false))
         .modelContainer(for: RainObservation.self, inMemory: true)
 }
