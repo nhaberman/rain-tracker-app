@@ -76,7 +76,7 @@ when recording measurements
             }
             .fileImporter(
                 isPresented: $showImportPicker,
-                allowedContentTypes: [.plainText],
+                allowedContentTypes: [.commaSeparatedText, .plainText],
                 allowsMultipleSelection: false
             ) { result in
                 switch result {
@@ -153,7 +153,9 @@ when recording measurements
             observations.forEach { modelContext.delete($0) }
         }
 
-        for line in content.components(separatedBy: .newlines) {
+        let allLines = content.components(separatedBy: .newlines)
+        let lines = allLines.first?.lowercased().hasPrefix("date") == true ? allLines.dropFirst() : allLines.dropFirst(0)
+        for line in lines {
             let trimmed = line.trimmingCharacters(in: .whitespaces)
             guard !trimmed.isEmpty else { continue }
 
@@ -183,14 +185,15 @@ when recording measurements
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
 
+        let header = "date,amount,time_of_day"
         let lines = observations.compactMap { obs -> String? in
             guard let date = obs.date else { return nil }
             return "\(formatter.string(from: date)),\(obs.amount),\(obs.resolvedTimeOfDay.rawValue)"
         }
-        let content = lines.joined(separator: "\n")
+        let content = ([header] + lines).joined(separator: "\n")
 
         let tempURL = FileManager.default.temporaryDirectory
-            .appendingPathComponent("rain_data.txt")
+            .appendingPathComponent("rain_data.csv")
 
         do {
             try content.write(to: tempURL, atomically: true, encoding: .utf8)
