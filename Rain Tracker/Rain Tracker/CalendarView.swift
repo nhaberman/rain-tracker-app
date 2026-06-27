@@ -6,6 +6,7 @@ struct CalendarView: View {
     @State private var displayedMonth: Date = Calendar.current.startOfMonth(for: .now)
     @State private var showingMonthPicker = false
     @State private var pickerDate: Date = .now
+    @AppStorage("useMetric") private var useMetric = false
 
     private let calendar = Calendar.current
     private let dayColumns = Array(repeating: GridItem(.flexible()), count: 7)
@@ -121,6 +122,7 @@ struct CalendarView: View {
                             Divider().padding(.leading, 40)
                             rainiestDayRow(rainiest)
                         }
+
                     }
                     .background(Color(.secondarySystemGroupedBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 16))
@@ -214,8 +216,8 @@ struct CalendarView: View {
             Label(label, systemImage: systemImage)
                 .labelStyle(TintedIconLabelStyle())
             Spacer()
-            Text(value, format: .number.precision(.fractionLength(2)))
-            Text("in").foregroundStyle(.secondary)
+            Text(value.toDisplay(metric: useMetric), format: .number.precision(.fractionLength(useMetric ? 0 : 2)))
+            Text(useMetric ? "mm" : "in").foregroundStyle(.secondary)
         }
         .font(.headline)
         .padding(.horizontal, 16)
@@ -229,8 +231,8 @@ struct CalendarView: View {
             Spacer()
             VStack(alignment: .trailing, spacing: 0) {
                 HStack(alignment: .firstTextBaseline, spacing: 2) {
-                    Text(rainiest.total, format: .number.precision(.fractionLength(2)))
-                    Text("in").foregroundStyle(.secondary)
+                    Text(rainiest.total.toDisplay(metric: useMetric), format: .number.precision(.fractionLength(useMetric ? 0 : 2)))
+                    Text(useMetric ? "mm" : "in").foregroundStyle(.secondary)
                 }
                 Text(rainiest.date, format: .dateTime.month(.abbreviated).day())
                     .font(.caption)
@@ -261,7 +263,8 @@ struct CalendarView: View {
                 DayCell(
                     date: day,
                     isToday: day.map { calendar.isDateInToday($0) } ?? false,
-                    rainTotal: day.flatMap { dailyTotals[calendar.startOfDay(for: $0)] }
+                    rainTotal: day.flatMap { dailyTotals[calendar.startOfDay(for: $0)] },
+                    useMetric: useMetric
                 )
             }
         }
@@ -273,6 +276,7 @@ struct DayCell: View {
     let date: Date?
     let isToday: Bool
     let rainTotal: Double?
+    var useMetric: Bool = false
 
     var body: some View {
         VStack(spacing: 2) {
@@ -294,7 +298,7 @@ struct DayCell: View {
                         Image(systemName: "drop.fill")
                             .font(.system(size: 11))
                             .foregroundStyle(.blue)
-                        Text(total, format: .number.precision(.fractionLength(2)))
+                        Text(total.toDisplay(metric: useMetric), format: .number.precision(.fractionLength(useMetric ? 0 : 2)))
                             .font(.system(size: 12))
                             .foregroundStyle(.blue)
                     }
