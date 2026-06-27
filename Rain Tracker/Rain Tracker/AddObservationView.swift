@@ -67,6 +67,7 @@ struct AddObservationView: View {
     private func save() {
         guard let amount, amount > 0 else { return }
         modelContext.insert(RainObservation(amount: amount, date: date, timeOfDay: useTimeOfDay ? timeOfDay : .unknown))
+        modelContext.saveAndRefreshWidgets()
         dismiss()
     }
 }
