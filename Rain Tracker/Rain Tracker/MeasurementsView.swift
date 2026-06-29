@@ -37,6 +37,7 @@ struct MeasurementsView: View {
 
     @Binding var showingAdd: Bool
     @State private var showingSettings = false
+    @AppStorage("useMetric") private var useMetric = false
     @AppStorage("measurementFilter") private var filterRawValue: String = MeasurementFilter.last30Days.rawValue
     private var filter: MeasurementFilter { MeasurementFilter(rawValue: filterRawValue) ?? .last30Days }
     private func setFilter(_ f: MeasurementFilter) { filterRawValue = f.rawValue }
@@ -97,15 +98,15 @@ struct MeasurementsView: View {
                         HStack {
                             Label("This month", systemImage: "drop.fill")
                             Spacer()
-                            Text(monthTotal, format: .number.precision(.fractionLength(2)))
-                            Text("in").foregroundStyle(.secondary)
+                            Text(monthTotal.toDisplay(metric: useMetric), format: .number.precision(.fractionLength(useMetric ? 0 : 2)))
+                            Text(useMetric ? "mm" : "in").foregroundStyle(.secondary)
                         }
                         .font(.headline)
                         HStack {
                             Label { Text("This year") } icon: { TripleDropIcon() }
                             Spacer()
-                            Text(yearTotal, format: .number.precision(.fractionLength(2)))
-                            Text("in").foregroundStyle(.secondary)
+                            Text(yearTotal.toDisplay(metric: useMetric), format: .number.precision(.fractionLength(useMetric ? 0 : 2)))
+                            Text(useMetric ? "mm" : "in").foregroundStyle(.secondary)
                         }
                         .font(.headline)
                     }
@@ -219,6 +220,7 @@ struct MeasurementsView: View {
 struct ObservationRow: View {
     let observation: RainObservation
     @AppStorage("useTimeOfDay") private var useTimeOfDay = true
+    @AppStorage("useMetric") private var useMetric = false
 
     var body: some View {
         HStack {
@@ -233,10 +235,10 @@ struct ObservationRow: View {
             }
             Spacer()
             HStack(alignment: .firstTextBaseline, spacing: 2) {
-                Text(observation.amount, format: .number.precision(.fractionLength(2)))
+                Text(observation.amount.toDisplay(metric: useMetric), format: .number.precision(.fractionLength(useMetric ? 0 : 2)))
                     .font(.body.monospacedDigit())
                     .bold()
-                Text("in")
+                Text(useMetric ? "mm" : "in")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -247,6 +249,7 @@ struct ObservationRow: View {
 struct ObservationDetailView: View {
     let observation: RainObservation
     @AppStorage("useTimeOfDay") private var useTimeOfDay = true
+    @AppStorage("useMetric") private var useMetric = false
     @Environment(\.modelContext) private var modelContext
 
     @State private var isEditing = false
@@ -262,10 +265,16 @@ struct ObservationDetailView: View {
             Section("Reading") {
                 if isEditing {
                     HStack {
-                        TextField("0.00", text: $amountText)
-                            .keyboardType(.decimalPad)
-                            .onChange(of: amountText) { _, new in limitToTwoDecimals(new) }
-                        Text("inches")
+                        TextField(useMetric ? "0" : "0.00", text: $amountText)
+                            .keyboardType(useMetric ? .numberPad : .decimalPad)
+                            .onChange(of: amountText) { _, new in
+                                if useMetric {
+                                    amountText = new.filter { $0.isNumber }
+                                } else {
+                                    limitToTwoDecimals(new)
+                                }
+                            }
+                        Text(useMetric ? "mm" : "inches")
                             .foregroundStyle(.secondary)
                     }
                     .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
@@ -280,7 +289,7 @@ struct ObservationDetailView: View {
                     }
                 } else {
                     LabeledContent("Amount") {
-                        Text("\(observation.amount, format: .number.precision(.fractionLength(2))) in")
+                        Text("\(observation.amount.toDisplay(metric: useMetric), format: .number.precision(.fractionLength(useMetric ? 0 : 2))) \(useMetric ? "mm" : "in")")
                     }
                     LabeledContent("Date") {
                         Text(observation.date ?? .now, format: .dateTime.year().month().day())
@@ -327,7 +336,8 @@ struct ObservationDetailView: View {
     }
 
     private func startEditing() {
-        amountText = String(observation.amount)
+        let display = observation.amount.toDisplay(metric: useMetric)
+        amountText = useMetric ? String(Int(display)) : String(display)
         date = observation.date ?? .now
         timeOfDay = observation.resolvedTimeOfDay == .unknown ? .morning : observation.resolvedTimeOfDay
         isEditing = true
@@ -335,7 +345,7 @@ struct ObservationDetailView: View {
 
     private func commitEdit() {
         guard let amount, amount > 0 else { return }
-        observation.amount = amount
+        observation.amount = Double.fromDisplay(amount, metric: useMetric)
         observation.date = Calendar.current.startOfDay(for: date)
         observation.timeOfDay = useTimeOfDay ? timeOfDay : .unknown
         modelContext.saveAndRefreshWidgets()

@@ -5,6 +5,7 @@ import Charts
 struct StatisticsView: View {
     @Query private var allObservations: [RainObservation]
     @State private var selectedYear: Int = Calendar.current.component(.year, from: .now)
+    @AppStorage("useMetric") private var useMetric = false
 
     private let calendar = Calendar.current
     private let currentYear = Calendar.current.component(.year, from: .now)
@@ -49,14 +50,20 @@ struct StatisticsView: View {
         monthlyTotals.max(by: { $0.value < $1.value })?.key
     }
 
+    private var unitLabel: String { useMetric ? "mm" : "in" }
+
+    private func formatAmount(_ inches: Double) -> String {
+        useMetric ? String(Int(inches.toDisplay(metric: true))) : String(format: "%.2f", inches)
+    }
+
     private var statCards: [AnyView] {
         var cards: [AnyView] = [
-            AnyView(StatCard(title: "Total", value: String(format: "%.2f", yearTotal), unit: "in", icon: "drop.fill")),
+            AnyView(StatCard(title: "Total", value: formatAmount(yearTotal), unit: unitLabel, icon: "drop.fill")),
             AnyView(StatCard(title: "Rainy Days", value: "\(rainyDayCount)", unit: "days", icon: "cloud.rain.fill")),
-            AnyView(StatCard(title: "Avg / Day", value: String(format: "%.2f", avgPerRainyDay), unit: "in", icon: "chart.line.uptrend.xyaxis")),
+            AnyView(StatCard(title: "Avg / Day", value: formatAmount(avgPerRainyDay), unit: unitLabel, icon: "chart.line.uptrend.xyaxis")),
         ]
         if let rainiest = rainiestDay {
-            cards.append(AnyView(StatCard(title: "Rainiest Day", value: String(format: "%.2f", rainiest.total), unit: "in", icon: "cloud.heavyrain.fill", subtitle: rainiest.date.formatted(.dateTime.month(.abbreviated).day()))))
+            cards.append(AnyView(StatCard(title: "Rainiest Day", value: formatAmount(rainiest.total), unit: unitLabel, icon: "cloud.heavyrain.fill", subtitle: rainiest.date.formatted(.dateTime.month(.abbreviated).day()))))
         }
         return cards
     }
@@ -112,7 +119,7 @@ struct StatisticsView: View {
                         Chart(chartData) { bar in
                             BarMark(
                                 x: .value("Month", bar.abbreviatedName),
-                                y: .value("Inches", bar.total)
+                                y: .value(useMetric ? "mm" : "Inches", bar.total.toDisplay(metric: useMetric))
                             )
                             .foregroundStyle(
                                 wettestMonth == bar.month
@@ -141,7 +148,7 @@ struct StatisticsView: View {
                     // Monthly breakdown list
                     Section("Monthly Breakdown") {
                         ForEach((1...12).filter { monthlyTotals[$0] != nil }, id: \.self) { month in
-                            let total = monthlyTotals[month] ?? 0
+                            let total = (monthlyTotals[month] ?? 0).toDisplay(metric: useMetric)
                             HStack {
                                 if month == wettestMonth {
                                     Image(systemName: "drop.fill")
@@ -150,10 +157,10 @@ struct StatisticsView: View {
                                 }
                                 Text(monthName(month))
                                 Spacer()
-                                Text(total, format: .number.precision(.fractionLength(2)))
+                                Text(total, format: .number.precision(.fractionLength(useMetric ? 0 : 2)))
                                     .font(.body.monospacedDigit())
                                     .bold()
-                                Text("in")
+                                Text(unitLabel)
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }

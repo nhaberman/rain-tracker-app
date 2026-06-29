@@ -8,6 +8,7 @@ struct SettingsView: View {
     @Query(sort: \RainObservation.date) private var observations: [RainObservation]
 
     @AppStorage("useTimeOfDay") var useTimeOfDay = true
+    @AppStorage("useMetric") var useMetric = false
 
     @State private var exportItem: ExportItem?
     @State private var showExportError = false
@@ -21,7 +22,18 @@ struct SettingsView: View {
         NavigationStack {
             Form {
                 Section("Behavior") {
-                    Toggle("Use \"Time of Day\"", isOn: $useTimeOfDay)
+                    Toggle("""
+Use \"Time of Day\"
+when recording measurements
+""", isOn: $useTimeOfDay)
+                }
+                
+                Section("Units") {
+                    Picker("Units", selection: $useMetric) {
+                        Text("Imperial (in)").tag(false)
+                        Text("Metric (mm)").tag(true)
+                    }
+                    .pickerStyle(.segmented)
                 }
                 
                 Section(header: Text("Data Management"), footer: Text("""
@@ -64,7 +76,7 @@ struct SettingsView: View {
             }
             .fileImporter(
                 isPresented: $showImportPicker,
-                allowedContentTypes: [.plainText],
+                allowedContentTypes: [.commaSeparatedText, .plainText],
                 allowsMultipleSelection: false
             ) { result in
                 switch result {
@@ -141,7 +153,9 @@ struct SettingsView: View {
             observations.forEach { modelContext.delete($0) }
         }
 
-        for line in content.components(separatedBy: .newlines) {
+        let allLines = content.components(separatedBy: .newlines)
+        let lines = allLines.first?.lowercased().hasPrefix("date") == true ? allLines.dropFirst() : allLines.dropFirst(0)
+        for line in lines {
             let trimmed = line.trimmingCharacters(in: .whitespaces)
             guard !trimmed.isEmpty else { continue }
 
@@ -171,14 +185,15 @@ struct SettingsView: View {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
 
+        let header = "date,amount,time_of_day"
         let lines = observations.compactMap { obs -> String? in
             guard let date = obs.date else { return nil }
             return "\(formatter.string(from: date)),\(obs.amount),\(obs.resolvedTimeOfDay.rawValue)"
         }
-        let content = lines.joined(separator: "\n")
+        let content = ([header] + lines).joined(separator: "\n")
 
         let tempURL = FileManager.default.temporaryDirectory
-            .appendingPathComponent("rain_data.txt")
+            .appendingPathComponent("rain_data.csv")
 
         do {
             try content.write(to: tempURL, atomically: true, encoding: .utf8)
