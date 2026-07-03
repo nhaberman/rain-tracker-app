@@ -85,7 +85,7 @@ enum RainAppScreen: String, AppEnum {
 }
 
 struct LogRainIntent: OpenIntent {
-    static let title: LocalizedStringResource = "Log Rain"
+    static let title: LocalizedStringResource = "Open to Log Rain"
     static let description = IntentDescription("Open Rain Tracker to log a new measurement.")
 
     @Parameter(title: "Screen")

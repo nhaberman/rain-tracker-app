@@ -26,7 +26,7 @@ enum RainIntentError: LocalizedError {
 }
 
 struct LogRainAmountIntent: AppIntent {
-    static let title: LocalizedStringResource = "Log Rain"
+    static let title: LocalizedStringResource = "Log Rain Amount"
     static let description = IntentDescription("Log a new rain measurement without opening the app.")
 
     @Parameter(title: "Amount", requestValueDialog: IntentDialog("How much rain fell?"))
@@ -97,7 +97,7 @@ struct RainTrackerShortcuts: AppShortcutsProvider {
                 "Log rain in \(.applicationName)",
                 "Log a rain measurement in \(.applicationName)"
             ],
-            shortTitle: "Log Rain",
+            shortTitle: "Log Rain Amount",
             systemImageName: "drop.fill"
         )
         AppShortcut(
