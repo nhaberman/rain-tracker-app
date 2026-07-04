@@ -64,39 +64,13 @@ struct RainProvider: TimelineProvider {
     }
 
     private func summarize(_ observations: [RainObservation], now: Date) -> RainEntry {
-        let calendar = Calendar.current
-        let startOfToday = calendar.startOfDay(for: now)
-        let currentMonth = calendar.component(.month, from: now)
-        let currentYear = calendar.component(.year, from: now)
-
-        var todayTotal: Double = 0
-        var monthTotal: Double = 0
-        var yearTotal: Double = 0
-        var monthDays: Set<Date> = []
-
-        for obs in observations {
-            guard let date = obs.date else { continue }
-            let year = calendar.component(.year, from: date)
-            guard year == currentYear else { continue }
-            yearTotal += obs.amount
-
-            let month = calendar.component(.month, from: date)
-            if month == currentMonth {
-                monthTotal += obs.amount
-                monthDays.insert(calendar.startOfDay(for: date))
-            }
-
-            if calendar.isDate(date, inSameDayAs: startOfToday) {
-                todayTotal += obs.amount
-            }
-        }
-
+        let totals = RainStore.totals(from: observations, now: now)
         return RainEntry(
             date: now,
-            todayTotal: todayTotal,
-            monthTotal: monthTotal,
-            yearTotal: yearTotal,
-            rainyDaysThisMonth: monthDays.count
+            todayTotal: totals.today,
+            monthTotal: totals.month,
+            yearTotal: totals.year,
+            rainyDaysThisMonth: totals.rainyDaysThisMonth
         )
     }
 }
