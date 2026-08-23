@@ -13,7 +13,7 @@
           "locale" : "en_US"
         }
       ],
-      "productID" : "nickhaberman.Rain-Tracker.tip.small",
+      "productID" : "nickhaberman.Rain_Tracker.tip.small",
       "referenceName" : "Small Tip",
       "type" : "Consumable"
     },
@@ -28,7 +28,7 @@
           "locale" : "en_US"
         }
       ],
-      "productID" : "nickhaberman.Rain-Tracker.tip.medium",
+      "productID" : "nickhaberman.Rain_Tracker.tip.medium",
       "referenceName" : "Medium Tip",
       "type" : "Consumable"
     },
@@ -43,7 +43,7 @@
           "locale" : "en_US"
         }
       ],
-      "productID" : "nickhaberman.Rain-Tracker.tip.large",
+      "productID" : "nickhaberman.Rain_Tracker.tip.large",
       "referenceName" : "Large Tip",
       "type" : "Consumable"
     }

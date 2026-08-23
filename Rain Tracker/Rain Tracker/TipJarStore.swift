@@ -12,9 +12,9 @@ enum TipPurchaseState: Equatable {
 @Observable
 final class TipJarStore {
     static let productIDs = [
-        "nickhaberman.Rain-Tracker.tip.small",
-        "nickhaberman.Rain-Tracker.tip.medium",
-        "nickhaberman.Rain-Tracker.tip.large",
+        "nickhaberman.Rain_Tracker.tip.small",
+        "nickhaberman.Rain_Tracker.tip.medium",
+        "nickhaberman.Rain_Tracker.tip.large",
     ]
 
     private(set) var products: [Product] = []
