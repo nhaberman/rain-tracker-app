@@ -21,6 +21,9 @@ struct Rain_TrackerApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .task {
+                    await TipJarStore.observeTransactionUpdates()
+                }
         }
         .modelContainer(sharedModelContainer)
     }

@@ -1,0 +1,62 @@
+{
+  "identifier" : "6C1E4C1A-7B7B-4C0D-9E0E-6B5F6D6F1A11",
+  "nonRenewingSubscriptions" : [],
+  "products" : [
+    {
+      "displayPrice" : "1.99",
+      "familyShareable" : false,
+      "internalID" : "TIP_SMALL",
+      "localizations" : [
+        {
+          "description" : "A small tip to support Rain Tracker",
+          "displayName" : "Small Tip",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "nickhaberman.Rain_Tracker.tip.small",
+      "referenceName" : "Small Tip",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "4.99",
+      "familyShareable" : false,
+      "internalID" : "TIP_MEDIUM",
+      "localizations" : [
+        {
+          "description" : "A medium tip to support Rain Tracker",
+          "displayName" : "Medium Tip",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "nickhaberman.Rain_Tracker.tip.medium",
+      "referenceName" : "Medium Tip",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "9.99",
+      "familyShareable" : false,
+      "internalID" : "TIP_LARGE",
+      "localizations" : [
+        {
+          "description" : "A large tip to support Rain Tracker",
+          "displayName" : "Large Tip",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "nickhaberman.Rain_Tracker.tip.large",
+      "referenceName" : "Large Tip",
+      "type" : "Consumable"
+    }
+  ],
+  "settings" : {
+    "_askToBuyEnabled" : false,
+    "_billingIssuesEnabled" : false,
+    "_disableDialogUpdates" : false,
+    "_locale" : "en_US"
+  },
+  "subscriptionGroups" : [],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}
