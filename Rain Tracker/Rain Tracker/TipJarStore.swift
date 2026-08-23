@@ -56,4 +56,12 @@ final class TipJarStore {
             purchaseState = .failed(error.localizedDescription)
         }
     }
+
+    static func observeTransactionUpdates() async {
+        for await verification in Transaction.updates {
+            if case .verified(let transaction) = verification {
+                await transaction.finish()
+            }
+        }
+    }
 }
