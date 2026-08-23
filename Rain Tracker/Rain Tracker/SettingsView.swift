@@ -55,7 +55,13 @@ when recording measurements
                         showDeleteAllAlert = true
                     }
                 }
-            
+
+                Section("Support") {
+                    NavigationLink("Tip Jar") {
+                        TipJarView()
+                    }
+                }
+
                 Section("About") {
                     LabeledContent("Version") {
                         Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "—")
