@@ -21,21 +21,23 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Behavior") {
+                Section("Preferences") {
                     Toggle("""
 Use \"Time of Day\"
 when recording measurements
 """, isOn: $useTimeOfDay)
-                }
-                
-                Section("Units") {
-                    Picker("Units", selection: $useMetric) {
-                        Text("Imperial (in)").tag(false)
-                        Text("Metric (mm)").tag(true)
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Units")
+                        Picker("Units", selection: $useMetric) {
+                            Text("Imperial (in)").tag(false)
+                            Text("Metric (mm)").tag(true)
+                        }
+                        .pickerStyle(.segmented)
+                        .labelsHidden()
                     }
-                    .pickerStyle(.segmented)
                 }
-                
+
                 Section(header: Text("Data Management"), footer: Text("""
 • Import an external file to load measurements to restore or transfer your data.
 • Export your measurements to a file to back up or share them.
