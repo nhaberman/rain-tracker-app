@@ -67,6 +67,9 @@ when recording measurements
                         Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "—")
                             .foregroundStyle(.secondary)
                     }
+                    Link("Visit Website", destination: URL(string: "https://nhaberman.github.io/rain-tracker-app")!)
+                    Link("Support and FAQ", destination: URL(string: "https://nhaberman.github.io/rain-tracker-app/support")!)
+                    Link("Privacy Policy", destination: URL(string: "https://nhaberman.github.io/rain-tracker-app/privacy-policy")!)
                 }
             }
             .navigationTitle("Settings")
