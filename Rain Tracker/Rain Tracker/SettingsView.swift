@@ -56,10 +56,11 @@ when recording measurements
                     }
                 }
 
-                Section("Support") {
+                Section("Feedback & Support") {
                     NavigationLink("Tip Jar") {
                         TipJarView()
                     }
+                    Link("Contact Developer", destination: URL(string: "mailto:support.nh.dev@proton.me?subject=Rain%20Tracker%20Support")!)
                 }
 
                 Section("About") {
