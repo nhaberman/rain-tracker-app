@@ -1,10 +1,5 @@
 <svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
 <defs>
-<linearGradient id="bgGrad" x1="0.5" y1="0" x2="0.5" y2="0.7">
-<stop offset="0%" stop-color="#4C86D6"/>
-<stop offset="70%" stop-color="#145CC5"/>
-<stop offset="100%" stop-color="#145CC5"/>
-</linearGradient>
 <linearGradient id="dropGrad" x1="0" y1="0" x2="1" y2="1">
 <stop offset="0%" stop-color="#FFFFFF"/>
 <stop offset="55%" stop-color="#D8E2EE"/>
@@ -16,7 +11,7 @@
 </linearGradient>
 </defs>
 
-<rect x="0" y="0" width="1024" height="1024" fill="url(#bgGrad)"/>
+<g transform="translate(512,512) scale(0.5) translate(-512,-512)">
 
 <g transform="translate(-127.6171875,0.900000000000091) translate(512,512) scale(0.9) translate(-512,-512)">
 <path d="M512,175 C416,297 294,455 294,629 A218,218 0 1,0 730,629 C730,455 608,297 512,175 Z" fill="url(#dropGrad)" stroke="#FFFFFF" stroke-width="4.5" stroke-opacity="0.5"/>
@@ -33,5 +28,7 @@
 <line x1="859" y1="693" x2="738" y2="693" stroke="#1B4FA0" stroke-width="9"/>
 <line x1="859" y1="783" x2="791" y2="783" stroke="#1B4FA0" stroke-width="9"/>
 <line x1="859" y1="873" x2="738" y2="873" stroke="#1B4FA0" stroke-width="9"/>
+</g>
+
 </g>
 </svg>
