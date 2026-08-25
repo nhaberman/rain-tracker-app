@@ -21,21 +21,23 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Behavior") {
+                Section("Preferences") {
                     Toggle("""
 Use \"Time of Day\"
 when recording measurements
 """, isOn: $useTimeOfDay)
-                }
-                
-                Section("Units") {
-                    Picker("Units", selection: $useMetric) {
-                        Text("Imperial (in)").tag(false)
-                        Text("Metric (mm)").tag(true)
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Units of Measurement")
+                        Picker("Units", selection: $useMetric) {
+                            Text("Imperial (in)").tag(false)
+                            Text("Metric (mm)").tag(true)
+                        }
+                        .pickerStyle(.segmented)
+                        .labelsHidden()
                     }
-                    .pickerStyle(.segmented)
                 }
-                
+
                 Section(header: Text("Data Management"), footer: Text("""
 • Import an external file to load measurements to restore or transfer your data.
 • Export your measurements to a file to back up or share them.
@@ -56,10 +58,12 @@ when recording measurements
                     }
                 }
 
-                Section("Support") {
+                Section("Feedback & Support") {
                     NavigationLink("Tip Jar") {
                         TipJarView()
                     }
+                    Link("Rate in App Store", destination: URL(string: "https://apps.apple.com/app/id0000000000?action=write-review")!)
+                    Link("Contact Developer", destination: URL(string: "mailto:support.nh.dev@proton.me?subject=Rain%20Tracker%20Support")!)
                 }
 
                 Section("About") {
@@ -67,6 +71,9 @@ when recording measurements
                         Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "—")
                             .foregroundStyle(.secondary)
                     }
+                    Link("Visit Website", destination: URL(string: "https://nhaberman.github.io/rain-tracker-app")!)
+                    Link("Support and FAQ", destination: URL(string: "https://nhaberman.github.io/rain-tracker-app/support")!)
+                    Link("Privacy Policy", destination: URL(string: "https://nhaberman.github.io/rain-tracker-app/privacy-policy")!)
                 }
             }
             .navigationTitle("Settings")
