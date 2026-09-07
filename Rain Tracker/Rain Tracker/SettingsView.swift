@@ -62,7 +62,7 @@ when recording measurements
                     NavigationLink("Tip Jar") {
                         TipJarView()
                     }
-                    Link("Rate in App Store", destination: URL(string: "https://apps.apple.com/app/id0000000000?action=write-review")!)
+                    Link("Rate in App Store", destination: URL(string: "https://apps.apple.com/app/id6804321772?action=write-review")!)
                     Link("Contact Developer", destination: URL(string: "mailto:support.nh.dev@proton.me?subject=Rain%20Tracker%20Support")!)
                 }
 
