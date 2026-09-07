@@ -12,8 +12,7 @@ Simple Rainfall Journal
 
 ## Promotional Text
 
-A fast, simple way to log readings from your rain gauge and track your rainfall month-over-month and year-over-year.
-Free, with no ads and no subscriptions.
+A fast, simple, free way to log readings from your rain gauge and track your rainfall month-over-month and year-over-year.
 
 ## Keywords
 
@@ -62,6 +61,4 @@ SIMPLE, PRIVATE, AND FREE
 
 ## What's New
 
-This is the first release of Rain Tracker, thanks for giving it a try!
-
-If you have any questions or ideas for future features, use the "Contact Developer" option in Settings, I'd love to hear from you!
+N/A
