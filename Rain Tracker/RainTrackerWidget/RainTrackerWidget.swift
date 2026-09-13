@@ -9,6 +9,27 @@ import WidgetKit
 import SwiftUI
 import SwiftData
 import AppIntents
+import OSLog
+
+private let widgetLogger = Logger(subsystem: "nickhaberman.Rain-Tracker.RainTrackerWidget", category: "timeline")
+
+/// Opens the shared SwiftData store and fetches observations, retrying once after a brief
+/// delay if the first attempt fails. A fresh widget process racing the main app's CloudKit
+/// setup (most likely right after install) can hit a transient error on the first try.
+private func fetchObservations(retriesRemaining: Int = 1) throws -> [RainObservation] {
+    do {
+        let container = try RainStore.makeModelContainer(cloudKitSyncing: false)
+        let context = ModelContext(container)
+        return try context.fetch(FetchDescriptor<RainObservation>())
+    } catch {
+        if retriesRemaining > 0 {
+            widgetLogger.error("Fetch failed, retrying: \(error.localizedDescription)")
+            Thread.sleep(forTimeInterval: 0.3)
+            return try fetchObservations(retriesRemaining: retriesRemaining - 1)
+        }
+        throw error
+    }
+}
 
 struct DropPlusIcon: View {
     var size: CGFloat = 56
@@ -54,11 +75,19 @@ struct RainProvider: TimelineProvider {
     private func loadEntry() -> RainEntry {
         let now = Date.now
         do {
-            let container = try RainStore.makeModelContainer(cloudKitSyncing: false)
-            let context = ModelContext(container)
-            let observations = try context.fetch(FetchDescriptor<RainObservation>())
+            let observations = try fetchObservations()
             return summarize(observations, now: now)
         } catch {
+            widgetLogger.error("Falling back after repeated fetch failure: \(error.localizedDescription)")
+            if let cached = RainStore.cachedTotals() {
+                return RainEntry(
+                    date: now,
+                    todayTotal: cached.today,
+                    monthTotal: cached.month,
+                    yearTotal: cached.year,
+                    rainyDaysThisMonth: cached.rainyDaysThisMonth
+                )
+            }
             return RainEntry(date: now, todayTotal: 0, monthTotal: 0, yearTotal: 0, rainyDaysThisMonth: 0)
         }
     }
@@ -308,11 +337,10 @@ struct RainCalendarProvider: TimelineProvider {
 
     private func loadEntry() -> RainCalendarEntry {
         do {
-            let container = try RainStore.makeModelContainer(cloudKitSyncing: false)
-            let context = ModelContext(container)
-            let observations = try context.fetch(FetchDescriptor<RainObservation>())
+            let observations = try fetchObservations()
             return Self.makeEntry(observations: observations, now: .now)
         } catch {
+            widgetLogger.error("Falling back to empty calendar after repeated fetch failure: \(error.localizedDescription)")
             return Self.makeEntry(observations: [], now: .now)
         }
     }
