@@ -64,6 +64,7 @@ struct GetRainTotalIntent: AppIntent {
         Summary("Get rain total for \(\.$period)")
     }
 
+    @MainActor
     func perform() async throws -> some IntentResult & ReturnsValue<Double> & ProvidesDialog {
         let container = try RainStore.makeModelContainer(cloudKitSyncing: false)
         let context = ModelContext(container)
