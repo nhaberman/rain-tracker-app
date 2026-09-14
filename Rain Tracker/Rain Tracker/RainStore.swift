@@ -6,6 +6,7 @@ import AppIntents
 extension ModelContext {
     func saveAndRefreshWidgets() {
         try? save()
+        RainStore.cacheWidgetTotals(context: self)
         WidgetCenter.shared.reloadAllTimelines()
     }
 }
@@ -13,6 +14,35 @@ extension ModelContext {
 enum RainStore {
     static let appGroupIdentifier = "group.nickhaberman.Rain-Tracker"
     static let pendingAddObservationKey = "pendingAddObservation"
+
+    private static let cachedTodayKey = "cachedWidgetTodayTotal"
+    private static let cachedMonthKey = "cachedWidgetMonthTotal"
+    private static let cachedYearKey = "cachedWidgetYearTotal"
+    private static let cachedRainyDaysKey = "cachedWidgetRainyDays"
+
+    /// Stashes the latest totals in the shared app-group defaults so the widget has
+    /// something better than zero to show if it ever fails to read the SwiftData store directly.
+    static func cacheWidgetTotals(context: ModelContext) {
+        guard let observations = try? context.fetch(FetchDescriptor<RainObservation>()) else { return }
+        let totals = totals(from: observations)
+        guard let defaults = UserDefaults(suiteName: appGroupIdentifier) else { return }
+        defaults.set(totals.today, forKey: cachedTodayKey)
+        defaults.set(totals.month, forKey: cachedMonthKey)
+        defaults.set(totals.year, forKey: cachedYearKey)
+        defaults.set(totals.rainyDaysThisMonth, forKey: cachedRainyDaysKey)
+    }
+
+    /// Last totals cached by `cacheWidgetTotals`, if any have ever been written.
+    static func cachedTotals() -> RainTotals? {
+        guard let defaults = UserDefaults(suiteName: appGroupIdentifier),
+              defaults.object(forKey: cachedTodayKey) != nil else { return nil }
+        return RainTotals(
+            today: defaults.double(forKey: cachedTodayKey),
+            month: defaults.double(forKey: cachedMonthKey),
+            year: defaults.double(forKey: cachedYearKey),
+            rainyDaysThisMonth: defaults.integer(forKey: cachedRainyDaysKey)
+        )
+    }
 
     static func makeModelContainer(cloudKitSyncing: Bool) throws -> ModelContainer {
         let schema = Schema([RainObservation.self])
